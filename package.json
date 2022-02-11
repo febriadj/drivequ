@@ -1,0 +1,46 @@
+{
+  "name": "storage-service",
+  "version": "1.0.0",
+  "description": "storage-service is a file storage service that can be integrated with various platforms such as web and mobile",
+  "main": "server/index.js",
+  "scripts": {
+    "server-start": "node server/index.js",
+    "server-dev": "nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/febriadj/storage-service.git"
+  },
+  "keywords": [
+    "storage",
+    "storage-service",
+    "file",
+    "saas",
+    "online-storage"
+  ],
+  "author": "Febriadji <iamfebriadji@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/febriadj/storage-service/issues"
+  },
+  "homepage": "https://github.com/febriadj/storage-service#readme",
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "formidable": "^2.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.1",
+    "mv": "^2.1.1"
+  }
+}
