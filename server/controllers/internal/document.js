@@ -58,7 +58,7 @@ exports.insert = async (req, res) => {
       response({
         res,
         message: 'Document added successfully',
-        data: document,
+        payload: document,
       });
     }
     catch (error0) {
@@ -70,4 +70,23 @@ exports.insert = async (req, res) => {
       });
     }
   });
+};
+
+exports.find = async (req, res) => {
+  try {
+    const documents = await DocModel.find().sort({ createdAt: -1 });
+    response({
+      res,
+      message: 'Request successful',
+      payload: documents,
+    });
+  }
+  catch (error0) {
+    response({
+      res,
+      message: error0.message,
+      success: false,
+      httpStatusCode: 400,
+    });
+  }
 };
