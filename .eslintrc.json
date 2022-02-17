@@ -21,6 +21,8 @@
     "rules": {
         "linebreak-style": "off",
         "no-console": "off",
-        "brace-style": "off"
+        "brace-style": "off",
+        "import/no-unresolved": "off",
+        "import/extensions": "off"
     }
 }
