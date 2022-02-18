@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.2",
+    "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
     "concurrently": "^7.0.0",
     "cors": "^2.8.5",
@@ -63,6 +64,7 @@
     "mv": "^2.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
     "react-router-dom": "^6.2.1",
     "tailwindcss": "^3.0.23"
   }
