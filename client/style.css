@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+  --font-base: 'Roboto', sans-serif;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+}
+
+body {
+  font-family: var(--font-base);
+}
+
+input,
+textarea,
+button,
+p {
+  font-family: var(--font-base);
+  font-size: 1rem;
+}
+
+td {
+  padding: 2px 10px;
+}
