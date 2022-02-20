@@ -3,8 +3,9 @@ module.exports = {
   theme: {
     extend: {
       gridTemplateColumns: {
+        'dashboard-header': '1fr auto',
+        'table-docs': '1fr 0.5fr 0.5fr 0.5fr',
         navbar: 'auto 1fr 0.5fr',
-        tableDocs: '1fr 0.5fr 0.5fr 0.5fr',
       },
     },
   },
