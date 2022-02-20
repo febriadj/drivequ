@@ -9,6 +9,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route exact path="/" element={<page.dashboard />} />
+        <Route exact path="/folder/:url" element={<page.docInFolder />} />
       </Routes>
     </BrowserRouter>
   );
