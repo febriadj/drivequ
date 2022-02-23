@@ -46,7 +46,7 @@ exports.find = async (req, res) => {
       if (q.url) {
         folders = await FolderModel.findOne({
           url: q.url,
-        });
+        }).sort({ name: 1 });
       }
       else if (q.name) {
         folders = await FolderModel.find({
@@ -54,17 +54,17 @@ exports.find = async (req, res) => {
             $regex: new RegExp(q.name),
             $options: 'i',
           },
-        });
+        }).sort({ name: 1 });
       }
       else if (q.location) {
         folders = await FolderModel.find({
           $expr: {
             $eq: [{ $last: '$location' }, q.location],
           },
-        });
+        }).sort({ name: 1 });
       }
     } else {
-      folders = await FolderModel.find().sort({ name: -1 });
+      folders = await FolderModel.find().sort({ name: 1 });
     }
 
     response({
