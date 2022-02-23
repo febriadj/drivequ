@@ -20,11 +20,12 @@
     ],
     "rules": {
         "linebreak-style": "off",
+        "no-underscore-dangle": "off",
         "no-console": "off",
         "brace-style": "off",
         "import/no-unresolved": "off",
         "import/extensions": "off",
         "react/prop-types": "off",
-        "no-underscore-dangle": "off"
+        "react/self-closing-comp": "off"
     }
 }
