@@ -8,6 +8,7 @@ import * as comp1 from '../components/dashboard';
 function Home() {
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
+  const [selected, setSelected] = useState([]);
 
   const [modal, setModal] = useState({
     insert: false,
@@ -66,8 +67,8 @@ function Home() {
           />
         )
       }
-      <div className="mt-16 grid gap-5 ml-60 py-3.5 px-5">
-        <div className="container bg-white pr-2.5 relative grid grid-cols-dashboard-header">
+      <div className="mt-16 grid gap-5 ml-60 px-5">
+        <div className="container bg-white pr-2.5 h-14 relative grid grid-cols-dashboard-header items-center border-0 border-b border-solid border-gray-300">
           {
             modal.insert && <comp1.insert setModal={setModal} />
           }
@@ -86,14 +87,38 @@ function Home() {
               <icon.BiChevronDown className="text-2xl" />
             </button>
           </div>
-          <div className="flex items-center gap-5">
-            <icon.BiInfoCircle className="text-2xl" />
+          <div className="flex items-center gap-2.5">
+            {
+              selected.length > 0 && (
+                <div className="flex items pr-2.5 border-0 border-r border-solid border-gray-300">
+                  <button
+                    type="button"
+                    className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                  >
+                    <icon.BiEdit className="text-2xl" />
+                  </button>
+                  <button
+                    type="button"
+                    className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                  >
+                    <icon.BiTrash className="text-2xl" />
+                  </button>
+                </div>
+              )
+            }
+            <button
+              type="button"
+              className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+            >
+              <icon.BiInfoCircle className="text-2xl" />
+            </button>
           </div>
         </div>
         <comp1.table
           documents={documents}
           folders={folders}
           location="/"
+          setSelected={setSelected}
         />
       </div>
     </div>
