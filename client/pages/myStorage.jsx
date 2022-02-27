@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as icon from 'react-icons/bi';
 
 import * as comp0 from '../components';
-import * as comp1 from '../components/dashboard';
+import * as comp1 from '../components/myStorage';
 
 function Home() {
   const [documents, setDocuments] = useState([]);
