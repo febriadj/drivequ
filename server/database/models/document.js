@@ -7,13 +7,19 @@ const DocModel = model('documents', new Schema({
     required: true,
     unique: true,
   },
+  originalFilename: {
+    type: Schema.Types.String,
+    trim: true,
+    required: true,
+  },
   format: {
     type: Schema.Types.String,
     default: '',
   },
   location: {
     type: Schema.Types.String,
-    default: 'home',
+    required: true,
+    default: '/',
   },
   url: {
     type: Schema.Types.String,
@@ -26,6 +32,7 @@ const DocModel = model('documents', new Schema({
   size: {
     type: Schema.Types.Number,
     required: true,
+    default: 0,
   },
   permission: {
     type: Schema.Types.String,
