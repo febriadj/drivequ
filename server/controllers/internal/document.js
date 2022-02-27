@@ -13,52 +13,57 @@ exports.insert = async (req, res) => {
       if (error1) throw error1;
 
       const {
-        location = 'home',
+        location = '/',
         permission = 'public',
       } = fields;
 
       const {
+        newFilename,
         originalFilename,
         filepath,
         size,
         mimetype,
       } = files.file;
 
-      if (permission !== 'public' || permission !== 'private') {
+      if (permission !== 'public' && permission !== 'private') {
         const newError = {
           message: 'Permission must be "private" or "public"',
         };
         throw newError;
       }
 
-      const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      const nameArr = [];
-
-      let i = 0;
-      while (i < 12) {
-        nameArr.push(alpha.charAt(Math.floor(Math.random() * alpha.length)));
-        i += 1;
-      }
-
       const format = originalFilename.split('.').reverse()[0];
-      const filename = `${nameArr.join('')}.${format}`;
+      const filename = `${newFilename}.${format}`;
 
-      await mv(filepath, `uploads/${filename}`, { mkdirp: true });
+      mv(filepath, `uploads/${filename}`, { mkdirp: true }, async (error2) => {
+        try {
+          if (error2) throw error2;
 
-      const document = await new DocModel({
-        filename: nameArr.join(''),
-        format,
-        location,
-        url: location === 'home' ? `/${filename}` : `/${location}/${filename}`,
-        mimetype,
-        size,
-        permission,
-      }).save();
+          const document = await new DocModel({
+            filename: newFilename,
+            originalFilename,
+            format,
+            location,
+            url: `/${filename}`,
+            mimetype,
+            size,
+            permission,
+          }).save();
 
-      response({
-        res,
-        message: 'Document added successfully',
-        payload: document,
+          response({
+            res,
+            message: 'Document added successfully',
+            payload: document,
+          });
+        }
+        catch (error3) {
+          response({
+            res,
+            message: error3.message,
+            success: false,
+            httpStatusCode: 400,
+          });
+        }
       });
     }
     catch (error0) {
@@ -74,7 +79,34 @@ exports.insert = async (req, res) => {
 
 exports.find = async (req, res) => {
   try {
-    const documents = await DocModel.find().sort({ createdAt: -1 });
+    const q = req.query;
+    const queryExists = Object.keys(q).length > 0;
+
+    let documents;
+
+    if (queryExists) {
+      if (q.id) {
+        documents = await DocModel.findOne({
+          _id: { $eq: q.id },
+        }).sort({ filename: 1 });
+      }
+      else if (q.location) {
+        documents = await DocModel.find({
+          location: {
+            $eq: q.location,
+          },
+        }).sort({ filename: 1 });
+      }
+      else if (q.url) {
+        documents = await DocModel.findOne({
+          location: { $eq: q.uql },
+        }).sort({ filename: 1 });
+      }
+    }
+    else {
+      documents = await DocModel.find().sort({ filename: 1 });
+    }
+
     response({
       res,
       message: 'Request successful',
