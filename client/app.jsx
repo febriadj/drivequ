@@ -8,7 +8,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<page.dashboard />} />
+        <Route exact path="/" element={<page.myStorage />} />
         <Route exact path="/folder/:url" element={<page.docInFolder />} />
       </Routes>
     </BrowserRouter>
