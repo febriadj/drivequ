@@ -25,6 +25,10 @@ module.exports = {
           'postcss-loader',
         ],
       },
+      {
+        test: /\.(jpe?g|png|gif|webp)$/,
+        loader: 'file-loader',
+      },
     ],
   },
   devServer: {
