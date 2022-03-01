@@ -7,6 +7,7 @@ exports.insert = async (req, res) => {
     const {
       name,
       permission = 'public',
+      description = '',
       location,
       path,
     } = req.body;
@@ -15,6 +16,7 @@ exports.insert = async (req, res) => {
       name,
       url: `/${uuidv4()}`,
       permission,
+      description,
       location,
       path,
     }).save();
@@ -43,10 +45,10 @@ exports.find = async (req, res) => {
     let folders;
 
     if (queryExists) {
-      if (q.url) {
+      if (q.id) {
         folders = await FolderModel.findOne({
-          url: q.url,
-        }).sort({ name: 1 });
+          _id: { $eq: q.id },
+        });
       }
       else if (q.name) {
         folders = await FolderModel.find({
@@ -54,6 +56,11 @@ exports.find = async (req, res) => {
             $regex: new RegExp(q.name),
             $options: 'i',
           },
+        }).sort({ name: 1 });
+      }
+      if (q.url) {
+        folders = await FolderModel.findOne({
+          url: q.url,
         }).sort({ name: 1 });
       }
       else if (q.location) {
