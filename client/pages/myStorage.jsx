@@ -4,11 +4,14 @@ import * as icon from 'react-icons/bi';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/myStorage';
+import * as detail from '../components/myStorage/detail';
 
 function Home() {
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
   const [selected, setSelected] = useState([]);
+
+  const [detailSideIsOpen, setDetailSideIsOpen] = useState(false);
 
   const [modal, setModal] = useState({
     insert: false,
@@ -50,7 +53,7 @@ function Home() {
   };
 
   useEffect(() => {
-    document.title = 'Cloud+ | My Storage';
+    document.title = 'Cloudingin - My Storage';
     handleGetDocs();
     handleGetFolders();
   }, []);
@@ -76,6 +79,7 @@ function Home() {
               <comp1.insert
                 setModal={setModal}
                 location="/"
+                handleGetDocs={handleGetDocs}
               />
             )
           }
@@ -116,19 +120,34 @@ function Home() {
             <button
               type="button"
               className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+              onClick={() => {
+                setDetailSideIsOpen((prev) => !prev);
+              }}
             >
               <icon.BiInfoCircle className="text-2xl" />
             </button>
           </div>
         </div>
-        <div className="w-full grid grid-cols-2/1fr-auto overflow-y-scroll">
-          <comp1.table
-            documents={documents}
-            folders={folders}
-            location="/"
-            setSelected={setSelected}
-          />
-          <div className="w-20"></div>
+        <div className="w-full grid grid-cols-2/1fr-auto">
+          <div className="relative overflow-y-scroll">
+            <comp1.table
+              documents={documents}
+              folders={folders}
+              location="/"
+              setSelected={setSelected}
+            />
+          </div>
+          <div className={`
+            relative overflow-hidden transition-all
+            ${detailSideIsOpen ? 'w-96' : 'w-0'}
+          `}
+          >
+            <detail.side
+              setDetailSideIsOpen={setDetailSideIsOpen}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          </div>
         </div>
       </div>
     </div>
