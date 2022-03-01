@@ -5,12 +5,14 @@ import * as icon from 'react-icons/bi';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/myStorage';
+import * as detail from '../components/myStorage/detail';
 
 function DocInFolder() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [detail, setDetail] = useState(null);
+  const [currentFolder, setCurrentFolder] = useState(null);
+  const [detailSideIsOpen, setDetailSideIsOpen] = useState(false);
 
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -55,7 +57,7 @@ function DocInFolder() {
     }
   };
 
-  const handleGetFolderDetail = async () => {
+  const handleGetCurrentFolder = async () => {
     try {
       const request = await axios.get('/folders', {
         params: {
@@ -66,8 +68,8 @@ function DocInFolder() {
       const { data } = request;
       if (!data.success) throw data;
 
-      setDetail(data.payload);
-      document.title = `Cloud+ | ${data.payload.name}`;
+      setCurrentFolder(data.payload);
+      document.title = `Cloudingin - ${data.payload.name}`;
     }
     catch (error0) {
       console.error(error0.message);
@@ -75,11 +77,12 @@ function DocInFolder() {
   };
 
   useEffect(() => {
-    handleGetFolderDetail();
+    handleGetCurrentFolder();
     handleGetDocs();
     handleGetFolders();
 
     setSelected([]);
+    setDetailSideIsOpen(false);
   }, [location]);
 
   return (
@@ -92,7 +95,7 @@ function DocInFolder() {
             location={location.pathname.replace(/.+?(?=[/])/, '')}
             setModal={setModal}
             handleGetFolders={handleGetFolders}
-            detail={detail}
+            detail={currentFolder}
           />
         )
       }
@@ -103,30 +106,31 @@ function DocInFolder() {
               <comp1.insert
                 setModal={setModal}
                 location={location.pathname.replace(/.+?(?=[/])/, '')}
+                handleGetDocs={handleGetDocs}
               />
             )
           }
           <div className="flex items-center">
             {
-              detail && detail.path.map((item, index) => (
+              currentFolder && currentFolder.path.map((item, index) => (
                 <button
                   type="button"
                   className="flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-xl hover:bg-gray-100"
                   onClick={() => {
-                    if (item === detail.path[detail.path.length - 1]) {
+                    if (item === currentFolder.path[currentFolder.path.length - 1]) {
                       setModal((prev) => ({
                         ...prev,
                         insert: !prev.insert,
                       }));
                     } else {
-                      navigate(item === '/' ? '/' : `/folder${detail.location[index]}`);
+                      navigate(item === '/' ? '/' : `/folder${currentFolder.location[index]}`);
                     }
                   }}
                   key={item}
                 >
                   <h3 className="text-xl">{item}</h3>
                   {
-                    item === detail.path[detail.path.length - 1]
+                    item === currentFolder.path[currentFolder.path.length - 1]
                       ? <icon.BiChevronDown className="text-2xl" />
                       : <icon.BiChevronRight className="text-2xl" />
                   }
@@ -156,19 +160,33 @@ function DocInFolder() {
             <button
               type="button"
               className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+              onClick={() => {
+                setDetailSideIsOpen((prev) => !prev);
+              }}
             >
               <icon.BiInfoCircle className="text-2xl" />
             </button>
           </div>
         </div>
-        <div className="w-full grid grid-cols-2/1fr-auto overflow-y-scroll">
-          <comp1.table
-            documents={documents}
-            folders={folders}
-            location="/"
-            setSelected={setSelected}
-          />
-          <div className="w-20">p</div>
+        <div className="w-full grid grid-cols-2/1fr-auto">
+          <div className="relative overflow-y-scroll">
+            <comp1.table
+              documents={documents}
+              folders={folders}
+              location={location.pathname.replace(/.+?(?=[/])/, '')}
+              setSelected={setSelected}
+            />
+          </div>
+          <div className={`
+            relative overflow-hidden
+            ${detailSideIsOpen ? 'w-96' : 'w-0'}
+          `}
+          >
+            <detail.side
+              selected={selected}
+              setSelected={setSelected}
+            />
+          </div>
         </div>
       </div>
     </div>
