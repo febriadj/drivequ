@@ -1,3 +1,4 @@
+const path = require('path');
 const { IncomingForm } = require('formidable');
 const mv = require('mv');
 const DocModel = require('../../database/models/document');
@@ -112,6 +113,21 @@ exports.find = async (req, res) => {
       message: 'Request successful',
       payload: documents,
     });
+  }
+  catch (error0) {
+    response({
+      res,
+      message: error0.message,
+      success: false,
+      httpStatusCode: 400,
+    });
+  }
+};
+
+exports.open = async (req, res) => {
+  try {
+    const file = await path.resolve(__dirname, `../../../uploads/${req.params.filename}`);
+    res.sendFile(file);
   }
   catch (error0) {
     response({
