@@ -5,6 +5,7 @@ const folder = require('../controllers/internal/folder');
 router.get('/documents', document.find);
 router.get('/documents/file/:filename', document.open);
 router.post('/documents', document.insert);
+router.delete('/documents', document.delete);
 
 router.get('/folders', folder.find);
 router.post('/folders', folder.insert);
