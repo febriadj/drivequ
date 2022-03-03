@@ -48,7 +48,7 @@ function NewFolder({
   };
 
   return (
-    <div className="fixed w-full h-full z-50 bg-gray-500/50 flex justify-center items-center">
+    <div className="fixed w-full h-full z-50 bg-gray-700/50 flex justify-center items-center">
       <div className="w-96 p-5 bg-white rounded-xl">
         <h2 className="text-xl font-bold">New Folder</h2>
         <form method="post" className="grid gap-2.5 mt-5" onSubmit={handleSubmit}>
