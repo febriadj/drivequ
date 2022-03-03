@@ -9,7 +9,10 @@ import * as detail from '../components/myStorage/detail';
 function Home() {
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState({
+    types: [],
+    payload: [],
+  });
 
   const [detailSideIsOpen, setDetailSideIsOpen] = useState(false);
 
@@ -23,6 +26,7 @@ function Home() {
       const { data } = await axios.get('/documents', {
         params: {
           location: '/',
+          trashed: false,
         },
       });
 
@@ -46,6 +50,21 @@ function Home() {
       if (!data.success) throw data;
 
       setFolders(data.payload);
+    }
+    catch (error0) {
+      console.error(error0.message);
+    }
+  };
+
+  const handleDeleteDocuments = async () => {
+    try {
+      const { data } = await axios({
+        method: 'delete',
+        url: '/documents',
+        data: selected.payload,
+      });
+      handleGetDocs();
+      console.log(data);
     }
     catch (error0) {
       console.error(error0.message);
@@ -100,7 +119,7 @@ function Home() {
           </div>
           <div className="flex items-center gap-2.5">
             {
-              selected.length > 0 && (
+              selected.payload.length > 0 && (
                 <div className="flex items pr-2.5 border-0 border-r border-solid border-gray-300">
                   <button
                     type="button"
@@ -111,6 +130,7 @@ function Home() {
                   <button
                     type="button"
                     className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                    onClick={handleDeleteDocuments}
                   >
                     <icon.BiTrashAlt className="text-2xl" />
                   </button>
