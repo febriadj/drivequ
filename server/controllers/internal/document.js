@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const { IncomingForm } = require('formidable');
 const mv = require('mv');
 const DocModel = require('../../database/models/document');
@@ -88,19 +89,26 @@ exports.find = async (req, res) => {
     if (queryExists) {
       if (q.id) {
         documents = await DocModel.findOne({
-          _id: { $eq: q.id },
+          $and: [
+            { _id: { $eq: q.id } },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         }).sort({ filename: 1 });
       }
       else if (q.location) {
         documents = await DocModel.find({
-          location: {
-            $eq: q.location,
-          },
+          $and: [
+            { location: { $eq: q.location } },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         }).sort({ filename: 1 });
       }
       else if (q.url) {
         documents = await DocModel.findOne({
-          location: { $eq: q.uql },
+          $and: [
+            { url: { $eq: q.url } },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         }).sort({ filename: 1 });
       }
     }
@@ -128,6 +136,41 @@ exports.open = async (req, res) => {
   try {
     const file = await path.resolve(__dirname, `../../../uploads/${req.params.filename}`);
     res.sendFile(file);
+  }
+  catch (error0) {
+    response({
+      res,
+      message: error0.message,
+      success: false,
+      httpStatusCode: 400,
+    });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const updated = await DocModel.updateMany(
+      { _id: { $in: req.body } },
+      { $set: { trashed: true } },
+      { multi: true },
+    );
+
+    const documents = await DocModel.find({ _id: { $in: req.body } });
+
+    let i = 0;
+    while (i < documents.length) {
+      const rootDir = path.resolve(__dirname, '../../../uploads');
+      const files = `${rootDir}/${documents[i].filename}.${documents[i].format}`;
+
+      if (fs.existsSync(files)) fs.unlinkSync(files);
+      i += 1;
+    }
+
+    response({
+      res,
+      message: 'Document deleted successfully',
+      payload: updated,
+    });
   }
   catch (error0) {
     response({
