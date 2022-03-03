@@ -10,6 +10,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<page.myStorage />} />
         <Route exact path="/folder/:url" element={<page.docInFolder />} />
+        <Route exact path="/trash" element={<page.trash />} />
       </Routes>
     </BrowserRouter>
   );
