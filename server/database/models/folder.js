@@ -21,6 +21,10 @@ const FolderModel = model('folders', new Schema({
     required: true,
     default: ['/'],
   },
+  type: {
+    type: Schema.Types.String,
+    default: 'folder',
+  },
   path: {
     type: Schema.Types.Array,
     required: true,
@@ -29,6 +33,10 @@ const FolderModel = model('folders', new Schema({
   description: {
     type: Schema.Types.String,
     default: '',
+  },
+  trashed: {
+    type: Schema.Types.Boolean,
+    default: false,
   },
 }, {
   timestamps: true,
