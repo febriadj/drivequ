@@ -2,13 +2,15 @@
 Storage service is a web-based (online) file storage service that can be integrated with various platforms such as web and mobile.
 
 The technology stack I used on this project includes:
-  - React & Redux
-  - Next.js
+  - React.js
+  - Tailwind CSS
   - Node.js & express.js
   - MongoDB
   - Webpack
 
 # Getting Started
+> Note: This project is still in progress, therefore all existing components are temporary and may change in the future.
+
 ~~~
 $ git clone https://github.com/febriadj/storage-service.git
 
@@ -30,6 +32,10 @@ $ npm run dev
 Run the app in development mode. then open http://localhost:3000 in the browser.
 
 # Screenshot 📸
+![img](./documents/images/app.png)
+
+### GIF:
+![gif](./documents/images/app.gif)
 
 # Contributing
 Contributions make the open source community a great place to learn, inspire and create. I really appreciate every contribution you make.
