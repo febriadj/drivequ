@@ -1,7 +1,11 @@
 import React from 'react';
 import * as icon from 'react-icons/bi';
 
-function Insert({ setModal, location }) {
+function Insert({
+  setModal,
+  location,
+  handleGetDocs,
+}) {
   const handleUploadFile = async (event) => {
     try {
       const fd = new FormData();
@@ -15,7 +19,15 @@ function Insert({ setModal, location }) {
       })).json();
 
       if (!request.success) throw request;
-      console.log(request.payload);
+
+      handleGetDocs();
+
+      setTimeout(() => {
+        setModal((prev) => ({
+          ...prev,
+          insert: false,
+        }));
+      }, 1000);
     }
     catch (error0) {
       console.error(error0.message);
@@ -23,7 +35,7 @@ function Insert({ setModal, location }) {
   };
 
   return (
-    <div className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 translate-y-14">
+    <div className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 translate-y-14 z-10">
       <div className="container py-3.5 grid">
         <button
           type="button"
@@ -43,7 +55,7 @@ function Insert({ setModal, location }) {
         <form method="post" encType="multipart/form-data">
           <label
             htmlFor="file"
-            className="flex items-center gap-5 py-2 px-3.5 hover:bg-gray-100"
+            className="flex items-center gap-5 py-2 px-3.5 hover:bg-gray-100 cursor-pointer"
           >
             <icon.BiUpload className="text-2xl" />
             <p className="text-base">Upload File</p>
@@ -57,7 +69,7 @@ function Insert({ setModal, location }) {
           </label>
           <label
             htmlFor="folder"
-            className="flex items-center gap-5 py-2 px-3.5 hover:bg-gray-100"
+            className="flex items-center gap-5 py-2 px-3.5 hover:bg-gray-100 cursor-pointer"
           >
             <icon.BiFolder className="text-2xl" />
             <p className="text-base">Upload Folder</p>
