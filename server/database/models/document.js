@@ -29,6 +29,10 @@ const DocModel = model('documents', new Schema({
     type: Schema.Types.String,
     default: '',
   },
+  type: {
+    type: Schema.Types.String,
+    default: 'file',
+  },
   size: {
     type: Schema.Types.Number,
     required: true,
@@ -38,6 +42,10 @@ const DocModel = model('documents', new Schema({
     type: Schema.Types.String,
     enum: ['public', 'private'],
     default: 'public',
+  },
+  trashed: {
+    type: Schema.Types.Boolean,
+    default: false,
   },
 }, {
   timestamps: true,
