@@ -16,7 +16,10 @@ function DocInFolder() {
 
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState({
+    types: [],
+    payload: [],
+  });
 
   const [modal, setModal] = useState({
     insert: false,
@@ -81,8 +84,11 @@ function DocInFolder() {
     handleGetDocs();
     handleGetFolders();
 
-    setSelected([]);
     setDetailSideIsOpen(false);
+    setSelected({
+      types: [],
+      payload: [],
+    });
   }, [location]);
 
   return (
@@ -140,7 +146,7 @@ function DocInFolder() {
           </div>
           <div className="flex items-center gap-2.5">
             {
-              selected.length > 0 && (
+              selected.payload.length > 0 && (
                 <div className="flex items pr-2.5 border-0 border-r border-solid border-gray-300">
                   <button
                     type="button"
@@ -178,11 +184,12 @@ function DocInFolder() {
             />
           </div>
           <div className={`
-            relative overflow-hidden
+            relative overflow-hidden transition-all
             ${detailSideIsOpen ? 'w-96' : 'w-0'}
           `}
           >
             <detail.side
+              setDetailSideIsOpen={setDetailSideIsOpen}
               selected={selected}
               setSelected={setSelected}
             />
