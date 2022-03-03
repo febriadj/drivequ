@@ -9,6 +9,7 @@ function NewFolder({
 }) {
   const [form, setForm] = useState({
     name: '',
+    description: '',
     permission: 'public',
   });
 
@@ -16,16 +17,15 @@ function NewFolder({
     try {
       event.preventDefault();
 
-      const request = await axios.post('/folders', {
+      const { data } = await axios.post('/folders', {
         name: form.name,
         permission: form.permission,
+        description: form.description,
         location: detail ? [...detail.location, location] : ['/'],
         path: detail ? [...detail.path, form.name] : ['/', form.name],
       });
 
-      const { data } = request;
       if (!data.success) throw data;
-
       handleGetFolders();
 
       setTimeout(() => {
@@ -40,25 +40,35 @@ function NewFolder({
     }
   };
 
+  const handleChange = (event) => {
+    setForm((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
   return (
     <div className="fixed w-full h-full z-50 bg-gray-500/50 flex justify-center items-center">
-      <div className="w-80 shadow-2xl shadow-gray-500/80 p-5 bg-white rounded-xl">
+      <div className="w-96 p-5 bg-white rounded-xl">
         <h2 className="text-xl font-bold">New Folder</h2>
-        <form method="post" className="grid gap-5 mt-5" onSubmit={handleSubmit}>
+        <form method="post" className="grid gap-2.5 mt-5" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
             id="name"
-            className="border border-solid border-gray-300 w-full py-2.5 px-5 rounded-xl"
+            className="border-0 border-b border-solid border-gray-300 w-full py-2.5"
             required
             placeholder="Folder name"
-            onChange={(event) => {
-              setForm((prev) => ({
-                ...prev,
-                name: event.target.value,
-              }));
-            }}
+            onChange={handleChange}
           />
+          <textarea
+            name="description"
+            id="description"
+            className="w-full h-24 resize-none"
+            placeholder="Description"
+            onChange={handleChange}
+          >
+          </textarea>
           <span className="flex justify-end">
             <button
               type="button"
