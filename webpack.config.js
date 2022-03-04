@@ -1,11 +1,7 @@
-const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './client/index.jsx',
-  output: {
-    path: path.resolve(__dirname, 'client/public'),
-    filename: 'bundle.js',
-  },
   resolve: {
     extensions: ['*', '.js', '.jsx'],
   },
@@ -31,12 +27,10 @@ module.exports = {
       },
     ],
   },
-  devServer: {
-    static: {
-      directory: path.resolve(__dirname, 'client/public'),
-    },
-    port: 3000,
-    hot: true,
-    historyApiFallback: true,
-  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      hash: true,
+      template: './client/index.html',
+    }),
+  ],
 };
