@@ -8,31 +8,25 @@ function Side({ selected, setDetailSideIsOpen }) {
 
   const handleGetDoc = async () => {
     try {
-      const { type } = selected[selected.length - 1];
       let request;
+      const { types, payload } = selected;
 
-      if (type === 'file') {
+      if (types[types.length - 1] === 'file') {
         const { data } = await axios('/documents', {
           params: {
-            id: selected[selected.length - 1].id,
+            id: payload[payload.length - 1],
           },
         });
 
-        request = {
-          type: 'file',
-          ...data.payload,
-        };
+        request = data.payload;
       } else {
         const { data } = await axios('/folders', {
           params: {
-            id: selected[selected.length - 1].id,
+            id: payload[payload.length - 1],
           },
         });
 
-        request = {
-          type: 'folder',
-          ...data.payload,
-        };
+        request = data.payload;
       }
 
       setDoc(request);
@@ -43,7 +37,7 @@ function Side({ selected, setDetailSideIsOpen }) {
   };
 
   useEffect(() => {
-    handleGetDoc();
+    if (selected.payload.length > 0) handleGetDoc();
   }, [selected]);
 
   return (
@@ -84,7 +78,7 @@ function Side({ selected, setDetailSideIsOpen }) {
           doc && doc.type === 'file' && (
             <div className="grid gap-5 py-5">
               <div className="flex">
-                <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-300 rounded-xl p-2.5">
+                <span className="flex gap-2.5 items-center bg-blue-200 border-solid border border-blue-300 rounded-xl p-2.5">
                   <icon.BiLockAlt className="text-2xl" />
                   <p className="first-letter:uppercase">{doc.permission}</p>
                 </span>
@@ -127,7 +121,7 @@ function Side({ selected, setDetailSideIsOpen }) {
           doc && doc.type === 'folder' && (
             <div className="grid gap-5 py-5">
               <div className="flex">
-                <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-300 rounded-xl p-2.5">
+                <span className="flex gap-2.5 items-center bg-blue-200 border-solid border border-blue-300 rounded-xl p-2.5">
                   <icon.BiLockAlt className="text-2xl" />
                   <p className="first-letter:uppercase">{doc.permission}</p>
                 </span>
