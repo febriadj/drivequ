@@ -42,6 +42,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
     "nodemon": "^2.0.15",
     "postcss-cli": "^9.1.0",
     "postcss-loader": "^6.2.1",
