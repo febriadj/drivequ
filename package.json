@@ -6,8 +6,8 @@
   "scripts": {
     "server-start": "node server/index.js",
     "server-dev": "nodemon server/index.js",
-    "client-build": "webpack --mode=production",
-    "client-dev": "webpack serve --mode=development --config ./webpack.config.js --open",
+    "client-build": "webpack --config ./webpack.prod.js",
+    "client-dev": "webpack serve --config ./webpack.dev.js",
     "dev": "concurrently \"npm run server-dev\" \"npm run client-dev\""
   },
   "repository": {
