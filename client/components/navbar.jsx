@@ -8,7 +8,7 @@ function Navbar() {
       <div className="w-full py-2 px-5 grid grid-cols-3/auto-1fr-0.5fr items-center">
         <div className="flex items-center gap-1.5 w-60">
           <icon.BiCloudSnow className="text-3xl" />
-          <h3 className="text-xl">Cloudingin</h3>
+          <h3 className="text-xl">Cloudipati</h3>
         </div>
         <label htmlFor="search" className="flex items-center gap-3.5 w-full bg-gray-100 py-3 px-3.5 rounded-xl">
           <icon.BiSearch className="text-2xl" />
