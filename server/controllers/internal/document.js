@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 const { IncomingForm } = require('formidable');
 const mv = require('mv');
 const DocModel = require('../../database/models/document');
@@ -111,6 +110,11 @@ exports.find = async (req, res) => {
           ],
         }).sort({ filename: 1 });
       }
+      else {
+        documents = await DocModel.find({
+          trashed: { $eq: q.trashed ?? false },
+        }).sort({ filename: 1 });
+      }
     }
     else {
       documents = await DocModel.find().sort({ filename: 1 });
@@ -147,7 +151,7 @@ exports.open = async (req, res) => {
   }
 };
 
-exports.delete = async (req, res) => {
+exports.trashed = async (req, res) => {
   try {
     const updated = await DocModel.updateMany(
       { _id: { $in: req.body } },
@@ -155,20 +159,9 @@ exports.delete = async (req, res) => {
       { multi: true },
     );
 
-    const documents = await DocModel.find({ _id: { $in: req.body } });
-
-    let i = 0;
-    while (i < documents.length) {
-      const rootDir = path.resolve(__dirname, '../../../uploads');
-      const files = `${rootDir}/${documents[i].filename}.${documents[i].format}`;
-
-      if (fs.existsSync(files)) fs.unlinkSync(files);
-      i += 1;
-    }
-
     response({
       res,
-      message: 'Document deleted successfully',
+      message: 'document successfully moved to trash',
       payload: updated,
     });
   }
