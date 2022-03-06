@@ -11,6 +11,7 @@ function App() {
         <Route exact path="/" element={<page.myStorage />} />
         <Route exact path="/folder/:url" element={<page.docInFolder />} />
         <Route exact path="/trash" element={<page.trash />} />
+        <Route path="*" element={<page.notfound />} />
       </Routes>
     </BrowserRouter>
   );
