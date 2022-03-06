@@ -49,7 +49,7 @@ function NewFolder({
 
   return (
     <div className="fixed w-full h-full z-50 bg-gray-700/50 flex justify-center items-center">
-      <div className="w-96 p-5 bg-white rounded-xl">
+      <div className="w-[500px] p-5 bg-white rounded-lg">
         <h2 className="text-xl font-bold">New Folder</h2>
         <form method="post" className="grid gap-2.5 mt-5" onSubmit={handleSubmit}>
           <input
@@ -69,10 +69,10 @@ function NewFolder({
             onChange={handleChange}
           >
           </textarea>
-          <span className="flex justify-end">
+          <span className="flex justify-end gap-2.5">
             <button
               type="button"
-              className="hover:bg-gray-100 p-2.5 rounded-xl w-20"
+              className="hover:bg-gray-100 p-1.5 rounded-md w-20"
               onClick={() => {
                 setModal((prev) => ({
                   ...prev,
@@ -84,7 +84,7 @@ function NewFolder({
             </button>
             <button
               type="submit"
-              className="hover:bg-gray-100 p-2.5 rounded-xl w-20 text-blue-700"
+              className="bg-gray-200 hover:bg-gray-300 p-1.5 rounded-md w-20"
             >
               Add
             </button>
