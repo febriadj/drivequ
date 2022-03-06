@@ -72,7 +72,22 @@ function DocInFolder() {
       if (!data.success) throw data;
 
       setCurrentFolder(data.payload);
-      document.title = `Cloudingin - ${data.payload.name}`;
+      document.title = `${data.payload.name} - Cloudipati`;
+    }
+    catch (error0) {
+      console.error(error0.message);
+    }
+  };
+
+  const handleDeleteDocuments = async () => {
+    try {
+      const { data } = await axios({
+        method: 'delete',
+        url: '/documents',
+        data: selected.payload,
+      });
+      handleGetDocs();
+      console.log(data);
     }
     catch (error0) {
       console.error(error0.message);
@@ -85,16 +100,23 @@ function DocInFolder() {
     handleGetFolders();
 
     setDetailSideIsOpen(false);
-    setSelected({
-      types: [],
-      payload: [],
-    });
+    setModal((prev) => ({ ...prev, insert: false }));
+    setSelected({ types: [], payload: [] });
+
+    const ctx = document.querySelectorAll('#path button');
+    let i = 0;
+    while (i < ctx.length) {
+      ctx[i].classList.remove('bg-gray-100');
+      i += 1;
+    }
   }, [location]);
 
   return (
     <div className="absolute w-full h-full flex flex-col">
       <comp0.navbar />
-      <comp0.sidebar />
+      <comp0.sidebar
+        page="/"
+      />
       {
         modal.newFolder && (
           <comp0.newFolder
@@ -116,12 +138,15 @@ function DocInFolder() {
               />
             )
           }
-          <div className="flex items-center">
+          <div className="flex items-center" id="path">
             {
               currentFolder && currentFolder.path.map((item, index) => (
                 <button
                   type="button"
-                  className="flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-xl hover:bg-gray-100"
+                  className={`
+                    flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-lg hover:bg-gray-100
+                    ${item === currentFolder.path[currentFolder.path.length - 1] && modal.insert && 'bg-gray-100'}
+                  `}
                   onClick={() => {
                     if (item === currentFolder.path[currentFolder.path.length - 1]) {
                       setModal((prev) => ({
@@ -157,6 +182,7 @@ function DocInFolder() {
                   <button
                     type="button"
                     className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                    onClick={handleDeleteDocuments}
                   >
                     <icon.BiTrashAlt className="text-2xl" />
                   </button>
@@ -165,7 +191,7 @@ function DocInFolder() {
             }
             <button
               type="button"
-              className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+              className={`p-2.5 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
               onClick={() => {
                 setDetailSideIsOpen((prev) => !prev);
               }}
