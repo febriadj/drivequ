@@ -58,13 +58,13 @@ function Home() {
 
   const handleDeleteDocuments = async () => {
     try {
-      const { data } = await axios({
+      await axios({
         method: 'delete',
-        url: '/documents',
+        url: '/documents/trash',
         data: selected.payload,
       });
+
       handleGetDocs();
-      console.log(data);
     }
     catch (error0) {
       console.error(error0.message);
@@ -72,15 +72,24 @@ function Home() {
   };
 
   useEffect(() => {
-    document.title = 'Cloudingin - My Storage';
+    document.title = 'My Storage - Cloudipati';
     handleGetDocs();
     handleGetFolders();
+
+    const ctx = document.querySelectorAll('#path button');
+    let i = 0;
+    while (i < ctx.length) {
+      ctx[i].classList.remove('bg-gray-100');
+      i += 1;
+    }
   }, []);
 
   return (
     <div className="absolute w-full h-full flex flex-col">
       <comp0.navbar />
-      <comp0.sidebar />
+      <comp0.sidebar
+        page="/"
+      />
       {
         modal.newFolder && (
           <comp0.newFolder
@@ -102,10 +111,10 @@ function Home() {
               />
             )
           }
-          <div className="flex items-center">
+          <div className="flex items-center" id="path">
             <button
               type="button"
-              className="flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-xl hover:bg-gray-100"
+              className={`flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-lg hover:bg-gray-100 ${modal.insert && 'bg-gray-100'}`}
               onClick={() => {
                 setModal((prev) => ({
                   ...prev,
@@ -139,7 +148,7 @@ function Home() {
             }
             <button
               type="button"
-              className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+              className={`p-2.5 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
               onClick={() => {
                 setDetailSideIsOpen((prev) => !prev);
               }}
