@@ -10,7 +10,7 @@ function Navbar() {
           <icon.BiCloudSnow className="text-3xl" />
           <h3 className="text-xl">Cloudipati</h3>
         </div>
-        <label htmlFor="search" className="flex items-center gap-3.5 w-full bg-gray-100 py-3 px-3.5 rounded-xl">
+        <label htmlFor="search" className="flex items-center gap-3.5 w-full bg-gray-100 py-3 px-3.5 rounded-lg">
           <icon.BiSearch className="text-2xl" />
           <input
             type="text"
