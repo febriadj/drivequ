@@ -79,15 +79,18 @@ function DocInFolder() {
     }
   };
 
-  const handleDeleteDocuments = async () => {
+  const handleTrashing = async () => {
     try {
       const { data } = await axios({
-        method: 'delete',
-        url: '/documents',
+        method: 'post',
+        url: '/trash',
         data: selected.payload,
       });
+
+      if (!data.success) throw data;
+
       handleGetDocs();
-      console.log(data);
+      handleGetFolders();
     }
     catch (error0) {
       console.error(error0.message);
@@ -135,6 +138,7 @@ function DocInFolder() {
                 setModal={setModal}
                 location={location.pathname.replace(/.+?(?=[/])/, '')}
                 handleGetDocs={handleGetDocs}
+                currentFolder={currentFolder}
               />
             )
           }
@@ -182,7 +186,7 @@ function DocInFolder() {
                   <button
                     type="button"
                     className="p-2.5 hover:bg-gray-100 rounded-[50%]"
-                    onClick={handleDeleteDocuments}
+                    onClick={handleTrashing}
                   >
                     <icon.BiTrashAlt className="text-2xl" />
                   </button>
