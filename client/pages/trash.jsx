@@ -19,9 +19,9 @@ function Trash() {
     clear: false,
   });
 
-  const handleGetTrashedDocs = async () => {
+  const handleGetTrashed = async () => {
     try {
-      const { data } = await axios.get('/documents', {
+      const { data } = await axios.get('/trash', {
         params: {
           trashed: true,
         },
@@ -37,7 +37,7 @@ function Trash() {
 
   useEffect(() => {
     document.title = 'Trash - Cloudipati';
-    handleGetTrashedDocs();
+    handleGetTrashed();
   }, []);
 
   return (
@@ -49,7 +49,7 @@ function Trash() {
       {
         modal.clear && (
           <comp1.modalClear
-            handleGetTrashedDocs={handleGetTrashedDocs}
+            handleGetTrashedDocs={handleGetTrashed}
             setModal={setModal}
             documents={documents}
           />
