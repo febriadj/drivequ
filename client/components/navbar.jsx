@@ -1,6 +1,6 @@
 import React from 'react';
 import * as icon from 'react-icons/bi';
-import avatar from '../assets/avatar.png';
+import avatar from '../assets/images/avatar.png';
 
 function Navbar() {
   return (
