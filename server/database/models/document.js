@@ -38,6 +38,10 @@ const DocModel = model('documents', new Schema({
     required: true,
     default: 0,
   },
+  parents: {
+    type: Schema.Types.Array,
+    default: [],
+  },
   permission: {
     type: Schema.Types.String,
     enum: ['public', 'private'],
