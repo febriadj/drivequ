@@ -1,9 +1,46 @@
 const path = require('path');
 const fs = require('fs');
 const DocModel = require('../../database/models/document');
-const FolderModel = require('../../database/models/document');
+const FolderModel = require('../../database/models/folder');
 
 const response = require('../../helpers/response');
+
+exports.insert = async (req, res) => {
+  try {
+    const obj = [
+      {
+        $or: [
+          {
+            $and: [
+              { _id: { $in: req.body } },
+              { trashed: { $eq: false } },
+            ],
+          },
+          { parents: { $elemMatch: { $in: req.body } } },
+        ],
+      },
+      { $set: { trashed: true } },
+      { multi: true },
+    ];
+
+    await DocModel.updateMany(obj[0], obj[1], obj[2]);
+    await FolderModel.updateMany(obj[0], obj[1], obj[2]);
+
+    response({
+      res,
+      message: 'documents and folders successfully moved to trash',
+      payload: null,
+    });
+  }
+  catch (error0) {
+    response({
+      res,
+      message: error0.message,
+      success: false,
+      httpStatusCode: 400,
+    });
+  }
+};
 
 exports.find = async (req, res) => {
   try {
