@@ -10,6 +10,7 @@ exports.insert = async (req, res) => {
       description = '',
       location,
       path,
+      parents = [],
     } = req.body;
 
     const folder = await new FolderModel({
@@ -19,6 +20,7 @@ exports.insert = async (req, res) => {
       description,
       location,
       path,
+      parents,
     }).save();
 
     response({
@@ -47,27 +49,43 @@ exports.find = async (req, res) => {
     if (queryExists) {
       if (q.id) {
         folders = await FolderModel.findOne({
-          _id: { $eq: q.id },
+          $and: [
+            { _id: { $eq: q.id } },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         });
       }
       else if (q.name) {
         folders = await FolderModel.find({
-          name: {
-            $regex: new RegExp(q.name),
-            $options: 'i',
-          },
+          $and: [
+            {
+              name: {
+                $regex: new RegExp(q.name),
+                $options: 'i',
+              },
+            },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         }).sort({ name: 1 });
       }
       if (q.url) {
         folders = await FolderModel.findOne({
-          url: q.url,
+          $and: [
+            { url: { $eq: q.url } },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         }).sort({ name: 1 });
       }
       else if (q.location) {
         folders = await FolderModel.find({
-          $expr: {
-            $eq: [{ $last: '$location' }, q.location],
-          },
+          $and: [
+            {
+              $expr: {
+                $eq: [{ $last: '$location' }, q.location],
+              },
+            },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         }).sort({ name: 1 });
       }
     } else {
