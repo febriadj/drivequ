@@ -1,10 +1,10 @@
 # Storage Service
-Storage service is a web-based (online) file storage service that can be integrated with various platforms such as web and mobile.
+Storage service (Cloudipati) is a web-based cloud storage service that is accessed online and can be integrated with various platforms such as web and mobile. Any user can connect his application with this cloud service through the API.
 
 The technology stack I used on this project includes:
   - React.js
   - Tailwind CSS
-  - Node.js & express.js
+  - Node.js & Express.js
   - MongoDB
   - Webpack
 
@@ -33,8 +33,6 @@ Run the app in development mode. then open http://localhost:3000 in the browser.
 
 # Screenshot 📸
 ![img](./documents/images/app.png)
-
-### GIF:
 ![gif](./documents/images/app.gif)
 
 # Contributing
