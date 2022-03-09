@@ -38,6 +38,10 @@ const FolderModel = model('folders', new Schema({
     type: Schema.Types.Boolean,
     default: false,
   },
+  parents: {
+    type: Schema.Types.Array,
+    default: [],
+  },
 }, {
   timestamps: true,
 }));
