@@ -16,6 +16,7 @@ exports.insert = async (req, res) => {
       const {
         location = '/',
         permission = 'public',
+        parents = [],
       } = fields;
 
       const {
@@ -46,6 +47,7 @@ exports.insert = async (req, res) => {
             format,
             location,
             url: `/${filename}`,
+            parents: parents.length > 0 ? parents.split(',') : [],
             mimetype,
             size,
             permission,
