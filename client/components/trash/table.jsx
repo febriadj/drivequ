@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 import * as helper from '../../helpers';
@@ -7,10 +6,7 @@ import * as helper from '../../helpers';
 function Table({
   documents,
   setSelected,
-  folders = [],
 }) {
-  const navigate = useNavigate();
-
   const [doubleKeys, setDoubleKeys] = useState({
     multipleSelect: false,
   });
@@ -83,29 +79,6 @@ function Table({
         </thead>
         <tbody>
           {
-            folders.map((item) => (
-              <tr
-                key={item._id}
-                className="h-12 grid grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
-                onDoubleClick={() => navigate(`/folder${item.url}`)}
-                onClick={(event) => {
-                  handleOnSelection(event, {
-                    _id: item._id,
-                    type: item.type,
-                  });
-                }}
-              >
-                <td className="flex items-center gap-3.5 overflow-x-hidden">
-                  <icon.BiFolder className="text-2xl" />
-                  <p className="text-base truncate">{item.name}</p>
-                </td>
-                <td><span className="block w-3 h-px bg-black"></span></td>
-                <td className="truncate">{helper.formatDate(item.createdAt)}</td>
-                <td><span className="block w-3 h-px bg-black"></span></td>
-              </tr>
-            ))
-          }
-          {
             documents.map((item) => (
               <tr
                 key={item._id}
@@ -117,25 +90,49 @@ function Table({
                   });
                 }}
               >
-                <td className="grid grid-cols-2/auto-1fr items-center gap-3.5 overflow-x-hidden">
-                  {
-                    /image/.test(item.mimetype) ? (
-                      <span className="relative w-6 h-6 overflow-hidden flex justify-center items-center bg-gray-800">
-                        <img
-                          src={`${axios.defaults.baseURL}/documents/file${item.url}`}
-                          alt=""
-                          className="w-[100%] h-[100%]"
-                        />
-                      </span>
-                    ) : (
-                      <icon.BiFileBlank className="text-2xl" />
-                    )
-                  }
-                  <p className="truncate">{`${item.filename}.${item.format}`}</p>
-                </td>
-                <td className="truncate">{item.mimetype}</td>
+                {
+                  item.type === 'folder' && (
+                    <td className="flex items-center gap-3.5 overflow-x-hidden">
+                      <icon.BiFolder className="text-2xl" />
+                      <p className="text-base truncate">{item.name}</p>
+                    </td>
+                  )
+                }
+                {
+                  item.type === 'file' && (
+                    <td className="grid grid-cols-2/auto-1fr items-center gap-3.5 overflow-x-hidden">
+                      {
+                        /image/.test(item.mimetype) ? (
+                          <span className="relative w-6 h-6 overflow-hidden flex justify-center items-center bg-gray-800">
+                            <img
+                              src={`${axios.defaults.baseURL}/documents/file${item.url}`}
+                              alt=""
+                              className="w-[100%] h-[100%]"
+                            />
+                          </span>
+                        ) : (
+                          <icon.BiFileBlank className="text-2xl" />
+                        )
+                      }
+                      <p className="truncate">{`${item.filename}.${item.format}`}</p>
+                    </td>
+                  )
+                }
+                {
+                  item.type === 'file' ? (
+                    <td className="truncate">{item.mimetype}</td>
+                  ) : (
+                    <td><span className="block w-3 h-px bg-black"></span></td>
+                  )
+                }
                 <td className="truncate">{helper.formatDate(item.createdAt)}</td>
-                <td className="truncate">{helper.bytesToSize(item.size)}</td>
+                {
+                  item.type === 'file' ? (
+                    <td className="truncate">{helper.bytesToSize(item.size)}</td>
+                  ) : (
+                    <td><span className="block w-3 h-px bg-black"></span></td>
+                  )
+                }
               </tr>
             ))
           }
