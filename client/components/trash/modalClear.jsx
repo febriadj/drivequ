@@ -19,6 +19,12 @@ function ModalClear({
 
       if (!data.success) throw data;
       handleGetTrashedDocs();
+
+      setTimeout(() => {
+        setModal((prev) => ({
+          ...prev, clear: false,
+        }));
+      }, 1000);
     }
     catch (error0) {
       console.error(error0.message);
