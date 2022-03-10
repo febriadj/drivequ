@@ -23,6 +23,7 @@ function NewFolder({
         description: form.description,
         location: detail ? [...detail.location, location] : ['/'],
         path: detail ? [...detail.path, form.name] : ['/', form.name],
+        parents: detail ? [...detail.parents, detail._id] : [],
       });
 
       if (!data.success) throw data;
