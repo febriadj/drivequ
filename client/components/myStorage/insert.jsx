@@ -5,17 +5,19 @@ function Insert({
   setModal,
   location,
   handleGetDocs,
+  currentFolder,
 }) {
   const handleUploadFile = async (event) => {
     try {
       const fd = new FormData();
+
       fd.append('file', event.target.files[0]);
       fd.append('location', location);
+      fd.append('parents', currentFolder ? [...currentFolder.parents, currentFolder._id] : []);
 
       const url = 'http://localhost:5050/api/in/documents';
       const request = await (await fetch(url, {
-        method: 'post',
-        body: fd,
+        method: 'post', body: fd,
       })).json();
 
       if (!request.success) throw request;
