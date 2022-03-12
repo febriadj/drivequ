@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
-import * as helper from '../../../helpers';
+import * as helper from '../../helpers';
 
 function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
   const [doc, setDoc] = useState(null);
