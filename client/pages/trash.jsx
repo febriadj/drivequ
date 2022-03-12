@@ -4,7 +4,7 @@ import * as icon from 'react-icons/bi';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/trash';
-import * as detail from '../components/myStorage/detail';
+import * as detail from '../components/detail';
 
 function Trash() {
   const [documents, setDocuments] = useState([]);

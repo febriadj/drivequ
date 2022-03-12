@@ -4,7 +4,7 @@ import * as icon from 'react-icons/bi';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/myStorage';
-import * as detail from '../components/myStorage/detail';
+import * as detail from '../components/detail';
 
 function Home() {
   const [documents, setDocuments] = useState([]);
