@@ -24,6 +24,7 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
         const { data } = await axios('/folders', {
           params: {
             id: payload[payload.length - 1],
+            trashed: trashedRequest ?? false,
           },
         });
 
@@ -38,7 +39,11 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
   };
 
   useEffect(() => {
-    if (selected.payload.length > 0) handleGetDoc();
+    (async () => {
+      if (selected.payload.length > 0) {
+        await handleGetDoc();
+      }
+    })();
   }, [selected]);
 
   return (
@@ -158,7 +163,7 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
                       <td className="truncate px-0 flex">
                         {
                           doc.path.slice(1, doc.path.length - 1).map((item) => (
-                            <p>{`/${item}`}</p>
+                            <p key={item}>{`/${item}`}</p>
                           ))
                         }
                       </td>
