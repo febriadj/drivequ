@@ -27,6 +27,10 @@ const UserModel = model('users', new Schema({
     type: Schema.Types.String,
     required: true,
   },
+  accessKeyId: {
+    type: Schema.Types.String,
+    unique: true,
+  },
 }, {
   timestamps: true,
 }));
