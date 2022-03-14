@@ -1,8 +1,14 @@
 const router = require('express').Router();
+const authenticate = require('../middleware/auth');
 
+const user = require('../controllers/internal/user');
 const trash = require('../controllers/internal/trash');
 const document = require('../controllers/internal/document');
 const folder = require('../controllers/internal/folder');
+
+router.post('/register', user.register);
+router.post('/login', user.login);
+router.get('/user/:id', authenticate, user.find);
 
 router.post('/trash', trash.insert);
 router.get('/trash', trash.find);
