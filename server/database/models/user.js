@@ -30,6 +30,19 @@ const UserModel = model('users', new Schema({
   accessKeyId: {
     type: Schema.Types.String,
     unique: true,
+    default() {
+      const init = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+      let i = 0;
+      let str = 'cs+';
+
+      while (i < 13) {
+        str += init.charAt(Math.floor(Math.random() * init.length));
+        i += 1;
+      }
+
+      return str;
+    },
   },
 }, {
   timestamps: true,
