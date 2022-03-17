@@ -1,6 +1,10 @@
 const { model, Schema } = require('mongoose');
 
 const DocModel = model('documents', new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
   filename: {
     type: Schema.Types.String,
     trim: true,
@@ -42,10 +46,9 @@ const DocModel = model('documents', new Schema({
     type: Schema.Types.Array,
     default: [],
   },
-  permission: {
-    type: Schema.Types.String,
-    enum: ['public', 'private'],
-    default: 'public',
+  privated: {
+    type: Schema.Types.Boolean,
+    default: false,
   },
   trashed: {
     type: Schema.Types.Boolean,
