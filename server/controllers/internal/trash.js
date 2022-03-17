@@ -12,6 +12,7 @@ exports.insert = async (req, res) => {
         $or: [
           {
             $and: [
+              { userId: { $eq: req.user.id } },
               { _id: { $in: req.body } },
               { trashed: { $eq: false } },
             ],
@@ -44,8 +45,15 @@ exports.insert = async (req, res) => {
 
 exports.find = async (req, res) => {
   try {
-    const docs = await DocModel.find({ trashed: { $eq: true } }).sort({ name: 1 });
-    const folders = await FolderModel.find({ trashed: { $eq: true } }).sort({ name: 1 });
+    const query = {
+      $and: [
+        { userId: { $eq: req.user.id } },
+        { trashed: { $eq: true } },
+      ],
+    };
+
+    const docs = await DocModel.find(query).sort({ name: 1 });
+    const folders = await FolderModel.find(query).sort({ name: 1 });
 
     const merge = [...docs, ...folders].sort((a, b) => a.name > b.name);
 
@@ -69,8 +77,9 @@ exports.clear = async (req, res) => {
   try {
     const query = {
       $and: [
+        { userId: { $eq: req.user.id } },
         { _id: { $in: req.body } },
-        { trashed: true },
+        { trashed: { $eq: true } },
       ],
     };
 
