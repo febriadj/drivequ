@@ -1,6 +1,10 @@
 const { model, Schema } = require('mongoose');
 
 const FolderModel = model('folders', new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
   name: {
     type: Schema.Types.String,
     trim: true,
@@ -11,10 +15,9 @@ const FolderModel = model('folders', new Schema({
     type: Schema.Types.String,
     unique: true,
   },
-  permission: {
-    type: Schema.Types.String,
-    enum: ['public', 'private'],
-    default: 'public',
+  privated: {
+    type: Schema.Types.Boolean,
+    default: false,
   },
   location: {
     type: Schema.Types.Array,
