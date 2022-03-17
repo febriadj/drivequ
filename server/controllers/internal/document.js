@@ -42,6 +42,7 @@ exports.insert = async (req, res) => {
           if (error2) throw error2;
 
           const document = await new DocModel({
+            userId: req.user.id,
             filename: newFilename,
             originalFilename,
             format,
@@ -91,6 +92,7 @@ exports.find = async (req, res) => {
       if (q.id) {
         documents = await DocModel.findOne({
           $and: [
+            { userId: { $eq: req.user.id } },
             { _id: { $eq: q.id } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
@@ -99,6 +101,7 @@ exports.find = async (req, res) => {
       else if (q.location) {
         documents = await DocModel.find({
           $and: [
+            { userId: { $eq: req.user.id } },
             { location: { $eq: q.location } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
@@ -107,6 +110,7 @@ exports.find = async (req, res) => {
       else if (q.url) {
         documents = await DocModel.findOne({
           $and: [
+            { userId: { $eq: req.user.id } },
             { url: { $eq: q.url } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
@@ -114,12 +118,17 @@ exports.find = async (req, res) => {
       }
       else {
         documents = await DocModel.find({
-          trashed: { $eq: q.trashed ?? false },
+          $and: [
+            { userId: { $eq: req.user.id } },
+            { trashed: { $eq: q.trashed ?? false } },
+          ],
         }).sort({ filename: 1 });
       }
     }
     else {
-      documents = await DocModel.find().sort({ filename: 1 });
+      documents = await DocModel.find({
+        userId: { $eq: req.user.id },
+      }).sort({ filename: 1 });
     }
 
     response({
@@ -156,7 +165,12 @@ exports.open = async (req, res) => {
 exports.trashed = async (req, res) => {
   try {
     const updated = await DocModel.updateMany(
-      { _id: { $in: req.body } },
+      {
+        $and: [
+          { userId: { $eq: req.user.id } },
+          { _id: { $in: req.body } },
+        ],
+      },
       { $set: { trashed: true } },
       { multi: true },
     );
