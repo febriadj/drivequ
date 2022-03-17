@@ -7,22 +7,23 @@ module.exports = async (req, res, next) => {
 
     if (!header) {
       const newError = {
-        message: '',
+        code: 417,
+        message: 'Server requires token in header',
       };
       throw newError;
     }
 
     const token = header.split(' ')[1];
-    req.user = await jwt.verify(token, '091u2bihasd90u23123');
+    req.user = await jwt.verify(token, process.env.JWT_PRIVATE_KEY);
 
     next();
   }
   catch (error0) {
     response({
       res,
-      message: error0.message,
+      httpStatusCode: error0.code || 401,
       success: false,
-      httpStatusCode: 401,
+      message: error0.message,
     });
   }
 };
