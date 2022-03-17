@@ -6,7 +6,7 @@ exports.insert = async (req, res) => {
   try {
     const {
       name,
-      permission = 'public',
+      privated = false,
       description = '',
       location,
       path,
@@ -14,11 +14,12 @@ exports.insert = async (req, res) => {
     } = req.body;
 
     const folder = await new FolderModel({
+      userId: req.user.id,
       name,
       url: `/${uuidv4()}`,
-      permission,
-      description,
+      privated,
       location,
+      description,
       path,
       parents,
     }).save();
@@ -52,6 +53,7 @@ exports.find = async (req, res) => {
           $and: [
             { _id: { $eq: q.id } },
             { trashed: { $eq: q.trashed ?? false } },
+            { userId: { $eq: req.user.id } },
           ],
         });
       }
@@ -64,6 +66,7 @@ exports.find = async (req, res) => {
                 $options: 'i',
               },
             },
+            { userId: { $eq: req.user.id } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
         }).sort({ name: 1 });
@@ -71,6 +74,7 @@ exports.find = async (req, res) => {
       if (q.url) {
         folders = await FolderModel.findOne({
           $and: [
+            { userId: { $eq: req.user.id } },
             { url: { $eq: q.url } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
@@ -84,12 +88,15 @@ exports.find = async (req, res) => {
                 $eq: [{ $last: '$location' }, q.location],
               },
             },
+            { userId: { $eq: req.user.id } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
         }).sort({ name: 1 });
       }
     } else {
-      folders = await FolderModel.find().sort({ name: 1 });
+      folders = await FolderModel.find({
+        userId: req.user.id,
+      }).sort({ name: 1 });
     }
 
     response({
