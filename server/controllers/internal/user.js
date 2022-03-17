@@ -8,7 +8,17 @@ exports.register = async (req, res) => {
     const { email, password, name } = req.body;
 
     const hash = await bcrypt.hash(password, await bcrypt.genSalt(10));
-    const user = await new UserModel({
+    const user = await UserModel.findOne({ email: { $eq: email } });
+
+    if (user) {
+      const newError = {
+        message: 'Email has been used',
+        statusCode: 412,
+      };
+      throw newError;
+    }
+
+    await new UserModel({
       email,
       password: hash,
       name: {
@@ -26,16 +36,28 @@ exports.register = async (req, res) => {
   catch (error0) {
     response({
       res,
-      message: error0.message,
+      httpStatusCode: error0.statusCode || 400,
       success: false,
-      httpStatusCode: 400,
+      message: error0.message,
     });
   }
 };
 
 exports.login = async (req, res) => {
   try {
-    const user = await UserModel.findOne({ email: { $eq: req.body.email } });
+    const { email, password } = req.body;
+    const user = await UserModel.findOne({ email: { $eq: email } });
+
+    const compare = await bcrypt.compare(password, user.password);
+
+    if (!compare) {
+      const newError = {
+        message: 'Password doesn\'t match',
+        statusCode: 412,
+      };
+      throw newError;
+    }
+
     const token = await jwt.sign({ id: user._id }, process.env.JWT_PRIVATE_KEY);
 
     response({
@@ -47,9 +69,9 @@ exports.login = async (req, res) => {
   catch (error0) {
     response({
       res,
-      message: error0.message,
+      httpStatusCode: error0.statusCode || 400,
       success: false,
-      httpStatusCode: 400,
+      message: error0.message,
     });
   }
 };
@@ -66,9 +88,9 @@ exports.find = async (req, res) => {
   catch (error0) {
     response({
       res,
-      message: error0.message,
+      httpStatusCode: error0.statusCode || 400,
       success: false,
-      httpStatusCode: 400,
+      message: error0.message,
     });
   }
 };
