@@ -7,6 +7,8 @@ import * as comp1 from '../components/myStorage';
 import * as detail from '../components/detail';
 
 function Home() {
+  const token = localStorage.getItem('token');
+
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
   const [selected, setSelected] = useState({
@@ -28,6 +30,9 @@ function Home() {
           location: '/',
           trashed: false,
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!data.success) throw data;
@@ -43,6 +48,9 @@ function Home() {
       const request = await axios.get('/folders', {
         params: {
           location: '/',
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -62,10 +70,12 @@ function Home() {
         method: 'post',
         url: '/trash',
         data: selected.payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!data.success) throw data;
-      console.log(data);
 
       handleGetDocs();
       handleGetFolders();
@@ -76,7 +86,7 @@ function Home() {
   };
 
   useEffect(() => {
-    document.title = 'My Storage - Cloudipati';
+    document.title = 'My Storage - CloudSync';
     handleGetDocs();
     handleGetFolders();
 

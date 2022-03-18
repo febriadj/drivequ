@@ -8,6 +8,8 @@ import * as comp1 from '../components/myStorage';
 import * as detail from '../components/detail';
 
 function DocInFolder() {
+  const token = localStorage.getItem('token');
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -32,6 +34,9 @@ function DocInFolder() {
         params: {
           location: location.pathname.replace(/.+?(?=[/])/, ''),
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!data.success) throw data;
@@ -47,6 +52,9 @@ function DocInFolder() {
       const request = await axios.get('/folders', {
         params: {
           location: location.pathname.replace(/.+?(?=[/])/, ''),
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -66,13 +74,16 @@ function DocInFolder() {
         params: {
           url: location.pathname.replace(/.+?(?=[/])/, ''),
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const { data } = request;
       if (!data.success) throw data;
 
       setCurrentFolder(data.payload);
-      document.title = `${data.payload.name} - Cloudipati`;
+      document.title = `${data.payload.name} - CloudSync`;
     }
     catch (error0) {
       console.error(error0.message);
@@ -85,6 +96,9 @@ function DocInFolder() {
         method: 'post',
         url: '/trash',
         data: selected.payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!data.success) throw data;

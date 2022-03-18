@@ -7,6 +7,8 @@ import * as comp1 from '../components/trash';
 import * as detail from '../components/detail';
 
 function Trash() {
+  const token = localStorage.getItem('token');
+
   const [documents, setDocuments] = useState([]);
   const [selected, setSelected] = useState({
     types: [],
@@ -24,6 +26,9 @@ function Trash() {
       const { data } = await axios.get('/trash', {
         params: {
           trashed: true,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
 
