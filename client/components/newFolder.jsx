@@ -7,6 +7,8 @@ function NewFolder({
   detail,
   location,
 }) {
+  const token = localStorage.getItem('token');
+
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -24,6 +26,10 @@ function NewFolder({
         location: detail ? [...detail.location, location] : ['/'],
         path: detail ? [...detail.path, form.name] : ['/', form.name],
         parents: detail ? [...detail.parents, detail._id] : [],
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!data.success) throw data;
