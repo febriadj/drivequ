@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import * as icon from 'react-icons/bi';
 
 function Insert({
@@ -7,6 +8,8 @@ function Insert({
   handleGetDocs,
   currentFolder,
 }) {
+  const token = localStorage.getItem('token');
+
   const handleUploadFile = async (event) => {
     try {
       const fd = new FormData();
@@ -15,12 +18,17 @@ function Insert({
       fd.append('location', location);
       fd.append('parents', currentFolder ? [...currentFolder.parents, currentFolder._id] : []);
 
-      const url = 'http://localhost:5050/api/in/documents';
-      const request = await (await fetch(url, {
-        method: 'post', body: fd,
-      })).json();
+      const request = await axios({
+        method: 'post',
+        url: 'http://localhost:5050/api/in/documents',
+        data: fd,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      if (!request.success) throw request;
+      if (!request.data.success) throw request.data;
 
       handleGetDocs();
 
