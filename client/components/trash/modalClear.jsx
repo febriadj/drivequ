@@ -6,6 +6,8 @@ function ModalClear({
   setModal,
   documents,
 }) {
+  const token = localStorage.getItem('token');
+
   const handleClearTrash = async () => {
     try {
       let arr = [];
@@ -15,6 +17,9 @@ function ModalClear({
         url: '/trash',
         method: 'delete',
         data: arr,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!data.success) throw data;
