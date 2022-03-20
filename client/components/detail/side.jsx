@@ -3,7 +3,13 @@ import axios from 'axios';
 import * as icon from 'react-icons/bi';
 import * as helper from '../../helpers';
 
-function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
+function Side({
+  selected,
+  setDetailSideIsOpen,
+  trashedRequest,
+}) {
+  const token = localStorage.getItem('token');
+
   const [doc, setDoc] = useState(null);
 
   const handleGetDoc = async () => {
@@ -17,6 +23,9 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
             id: payload[payload.length - 1],
             trashed: trashedRequest ?? false,
           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         request = data.payload;
@@ -25,6 +34,9 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
           params: {
             id: payload[payload.length - 1],
             trashed: trashedRequest ?? false,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -67,27 +79,31 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
         </div>
         <div className="mt-5">
           {
-            doc && doc.type === 'file' ? (
-              /image/i.test(doc.mimetype) ? (
-                <div className="relative w-full h-60 flex justify-center items-center bg-black overflow-hidden">
-                  <img
-                    src={`${axios.defaults.baseURL}/documents/file${doc && doc.url}`}
-                    alt=""
-                    className="w-full"
-                  />
-                  <span className="absolute bottom-0 right-0 w-8 h-8 -translate-x-2.5 -translate-y-2.5 rounded-[50%] bg-gray-200 flex justify-center items-center">
-                    <icon.BiQuestionMark className="text-xl" />
-                  </span>
-                </div>
-              ) : (
-                <iframe
-                  title="frame"
+            doc && doc.type === 'file' && /image/i.test(doc.mimetype) && (
+              <div className="relative w-full h-60 flex justify-center items-center bg-black overflow-hidden">
+                <img
                   src={`${axios.defaults.baseURL}/documents/file${doc && doc.url}`}
-                  className="w-full h-60 block bg-gray-100 overflow-hidden"
-                >
-                </iframe>
-              )
-            ) : (
+                  alt=""
+                  className="w-full"
+                />
+                <span className="absolute bottom-0 right-0 w-8 h-8 -translate-x-2.5 -translate-y-2.5 rounded-[50%] bg-gray-200 flex justify-center items-center">
+                  <icon.BiQuestionMark className="text-xl" />
+                </span>
+              </div>
+            )
+          }
+          {
+            doc && doc.type === 'file' && !/image/i.test(doc.mimetype) && (
+              <iframe
+                title="frame"
+                src={`${axios.defaults.baseURL}/documents/file${doc && doc.url}`}
+                className="w-full h-60 block bg-gray-100 overflow-hidden"
+              >
+              </iframe>
+            )
+          }
+          {
+            doc && doc.type !== 'file' && (
               <span className="w-full h-60 bg-gray-100 flex justify-center items-center">
                 <icon.BiFolder className="text-6xl" />
               </span>
@@ -99,8 +115,8 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
             <div className="grid gap-5 py-5">
               <div className="flex">
                 <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-400 rounded-xl p-2.5">
-                  <icon.BiGlobe className="text-2xl" />
-                  <p>{doc.permission}</p>
+                  { doc.privated ? <icon.BiLock className="text-2xl" /> : <icon.BiGlobe className="text-2xl" /> }
+                  <p>{doc.privated ? 'private' : 'public'}</p>
                 </span>
               </div>
               <div>
@@ -146,8 +162,8 @@ function Side({ selected, setDetailSideIsOpen, trashedRequest }) {
             <div className="grid gap-5 py-5">
               <div className="flex">
                 <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-400 rounded-xl p-2.5">
-                  <icon.BiGlobe className="text-2xl" />
-                  <p>{doc.permission}</p>
+                  { doc.privated ? <icon.BiLock className="text-2xl" /> : <icon.BiGlobe className="text-2xl" /> }
+                  <p>{doc.privated ? 'private' : 'public'}</p>
                 </span>
               </div>
               <div>
