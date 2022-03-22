@@ -18,6 +18,9 @@
     "plugins": [
         "react"
     ],
+    "ignorePatterns": [
+        "client/redux/features/"
+    ],
     "rules": {
         "linebreak-style": "off",
         "no-underscore-dangle": "off",
