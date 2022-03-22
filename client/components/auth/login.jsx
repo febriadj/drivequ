@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import * as icon from 'react-icons/bi';
-import { login } from '../../redux/features/user';
+import { login } from '../../redux/features/auth';
 
 function Login({ setLoginFormIsOpen }) {
   const dispatch = useDispatch();

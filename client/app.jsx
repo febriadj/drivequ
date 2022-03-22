@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import './style.css';
 
 import * as page from './pages';
-import { login, logout } from './redux/features/user';
+import { login, logout } from './redux/features/auth';
 
 function App() {
   const token = localStorage.getItem('token');

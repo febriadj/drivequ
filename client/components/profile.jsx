@@ -1,8 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as icon from 'react-icons/bi';
-
-import { logout } from '../redux/features/user';
+import { logout } from '../redux/features/auth';
 
 function Profile() {
   const dispatch = useDispatch();
