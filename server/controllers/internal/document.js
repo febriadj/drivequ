@@ -37,7 +37,7 @@ exports.insert = async (req, res) => {
       const format = originalFilename.split('.').reverse()[0];
       const filename = `${newFilename}.${format}`;
 
-      mv(filepath, `uploads/${filename}`, { mkdirp: true }, async (error2) => {
+      mv(filepath, `uploads/${req.user.id}/${filename}`, { mkdirp: true }, async (error2) => {
         try {
           if (error2) throw error2;
 
@@ -149,7 +149,7 @@ exports.find = async (req, res) => {
 
 exports.open = async (req, res) => {
   try {
-    const file = await path.resolve(__dirname, `../../../uploads/${req.params.filename}`);
+    const file = await path.resolve(__dirname, `../../../uploads/${req.params.id}/${req.params.filename}`);
     res.sendFile(file);
   }
   catch (error0) {
