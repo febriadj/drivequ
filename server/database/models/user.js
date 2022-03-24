@@ -11,12 +11,10 @@ const UserModel = model('users', new Schema({
     first: {
       type: Schema.Types.String,
       trim: true,
-      required: true,
     },
     last: {
       type: Schema.Types.String,
       trim: true,
-      required: true,
     },
   },
   avatar: {
@@ -24,6 +22,18 @@ const UserModel = model('users', new Schema({
     default: 'avatar.png',
   },
   password: {
+    type: Schema.Types.String,
+    required: true,
+  },
+  type: {
+    type: Schema.Types.String,
+    enum: ['personal', 'business'],
+    default: 'personal',
+  },
+  company: {
+    type: Schema.Types.String,
+  },
+  app: {
     type: Schema.Types.String,
     required: true,
   },
