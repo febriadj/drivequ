@@ -12,10 +12,11 @@ router.get('/user', authenticate, user.find);
 
 router.post('/trash', authenticate, trash.insert);
 router.get('/trash', authenticate, trash.find);
-router.delete('/trash', authenticate, trash.clear);
+router.delete('/trash', authenticate, trash.delete);
+router.put('/trash/recover', authenticate, trash.recover);
 
 router.get('/documents', authenticate, document.find);
-router.get('/documents/file/:filename', document.open);
+router.get('/documents/:id/file/:filename', document.open);
 router.post('/documents', authenticate, document.insert);
 router.put('/documents/trashing', authenticate, document.trashed);
 
