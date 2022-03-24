@@ -5,14 +5,16 @@ const response = require('../../helpers/response');
 
 exports.register = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const {
+      email, password, name, app, company, accType,
+    } = req.body;
 
     const hash = await bcrypt.hash(password, await bcrypt.genSalt(10));
     const user = await UserModel.findOne({ email: { $eq: email } });
 
     if (user) {
       const newError = {
-        message: 'Email has been used',
+        message: 'This email is already in use by another user',
         statusCode: 412,
       };
       throw newError;
@@ -25,6 +27,9 @@ exports.register = async (req, res) => {
         first: name.first,
         last: name.last,
       },
+      app,
+      company,
+      accType,
     }).save();
 
     response({
