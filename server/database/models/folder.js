@@ -8,7 +8,6 @@ const FolderModel = model('folders', new Schema({
   name: {
     type: Schema.Types.String,
     trim: true,
-    required: true,
     unique: true,
   },
   url: {
