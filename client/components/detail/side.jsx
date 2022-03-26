@@ -7,6 +7,7 @@ function Side({
   selected,
   setDetailSideIsOpen,
   trashedRequest,
+  currentFolder,
 }) {
   const token = localStorage.getItem('token');
 
@@ -20,7 +21,7 @@ function Side({
       if (types[types.length - 1] === 'file') {
         const { data } = await axios('/documents', {
           params: {
-            id: payload[payload.length - 1],
+            id: payload[payload.length - 1].id,
             trashed: trashedRequest ?? false,
           },
           headers: {
@@ -32,7 +33,7 @@ function Side({
       } else {
         const { data } = await axios('/folders', {
           params: {
-            id: payload[payload.length - 1],
+            id: payload[payload.length - 1].id,
             trashed: trashedRequest ?? false,
           },
           headers: {
@@ -63,10 +64,18 @@ function Side({
       <div className="w-full p-5">
         <div className="grid grid-cols-2/1fr-auto items-center gap-5">
           {
-            doc && doc.type === 'file' ? (
+            selected.payload.length > 0 && doc && doc.type === 'file' && (
               <h1 className="text-2xl font-semibold truncate">{doc && `${doc.filename}.${doc.format}`}</h1>
-            ) : (
+            )
+          }
+          {
+            selected.payload.length > 0 && doc && doc.type === 'folder' && (
               <h1 className="text-2xl font-semibold truncate">{doc && doc.name}</h1>
+            )
+          }
+          {
+            selected.payload.length === 0 && (
+              <h1 className="text-2xl font-semibold truncate">{currentFolder ? currentFolder.name : 'My Storage'}</h1>
             )
           }
           <button
@@ -82,7 +91,7 @@ function Side({
             doc && doc.type === 'file' && /image/i.test(doc.mimetype) && (
               <div className="relative w-full h-60 flex justify-center items-center bg-black overflow-hidden">
                 <img
-                  src={`${axios.defaults.baseURL}/documents/file${doc && doc.url}`}
+                  src={`${axios.defaults.baseURL}/documents/${doc.userId}/file${doc && doc.url}`}
                   alt=""
                   className="w-full"
                 />
@@ -96,7 +105,7 @@ function Side({
             doc && doc.type === 'file' && !/image/i.test(doc.mimetype) && (
               <iframe
                 title="frame"
-                src={`${axios.defaults.baseURL}/documents/file${doc && doc.url}`}
+                src={`${axios.defaults.baseURL}/documents/${doc.userId}/file${doc && doc.url}`}
                 className="w-full h-60 block bg-gray-100 overflow-hidden"
               >
               </iframe>
@@ -199,6 +208,14 @@ function Side({
                 <h2 className="text-xl font-semibold mb-2.5">Description</h2>
                 <p>{doc.description}</p>
               </span>
+            </div>
+          )
+        }
+        {
+          !doc && (
+            <div className="flex flex-col justify-center items-center gap-5 overflow-hidden bg-gray-100 w-full h-60">
+              <icon.BiFolderOpen className="text-6xl opacity-50" />
+              <p className="truncate">Select a file or folder to view details</p>
             </div>
           )
         }
