@@ -21,11 +21,11 @@ function Sidebar({ page }) {
               <p className="text-base">Trash</p>
             </Link>
           </div>
-          <div className="border-0 border-t border-solid border-gray-300 mt-5 p-5">
-            <span className="flex items-center gap-5 rounded-r-3xl hover:bg-gray-50">
-              <icon.BiDockLeft className="text-2xl" />
-              <p className="text-base">Documentation</p>
-            </span>
+          <div className="border-0 border-t border-solid border-gray-300 mt-5 pt-5">
+            <Link to="/docs" className="flex items-center gap-5 rounded-r-3xl py-2.5 px-5">
+              <icon.BiHelpCircle className="text-2xl" />
+              <p className="text-base">How to Use</p>
+            </Link>
           </div>
         </div>
       </div>
