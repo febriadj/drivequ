@@ -5,16 +5,19 @@ function Auth() {
   const [loginFormIsOpen, setLoginFormIsOpen] = useState(true);
 
   useEffect(() => {
-    document.title = `${loginFormIsOpen ? 'Sign In' : 'Sign Up'} - Cloudipati`;
-  });
+    document.title = `${loginFormIsOpen ? 'Sign In' : 'Sign Up'} - CloudSync`;
+  }, [loginFormIsOpen]);
 
   return (
-    <div className="absolute w-full h-full flex justify-center items-center">
-      {
-        loginFormIsOpen
-          ? <comp.login setLoginFormIsOpen={setLoginFormIsOpen} />
-          : <comp.register setLoginFormIsOpen={setLoginFormIsOpen} />
-      }
+    <div className="absolute w-full h-full grid grid-cols-2/auto-1fr">
+      <div className="relative w-[450px] h-full flex">
+        {
+          loginFormIsOpen
+            ? <comp.login setLoginFormIsOpen={setLoginFormIsOpen} />
+            : <comp.register setLoginFormIsOpen={setLoginFormIsOpen} />
+        }
+      </div>
+      <div className="bg-gray-200"></div>
     </div>
   );
 }
