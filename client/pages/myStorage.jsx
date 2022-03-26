@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 
@@ -8,6 +10,7 @@ import * as detail from '../components/detail';
 
 function Home() {
   const token = localStorage.getItem('token');
+  const { auth: { user }, modal: { logoutIsOpen } } = useSelector((state) => state);
 
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -22,6 +25,8 @@ function Home() {
     insert: false,
     newFolder: false,
   });
+
+  const [insertPos, setInsertPos] = useState(0);
 
   const handleGetDocs = async () => {
     try {
@@ -69,7 +74,7 @@ function Home() {
       const { data } = await axios({
         method: 'post',
         url: '/trash',
-        data: selected.payload,
+        data: selected.payload.map(({ id }) => id),
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -100,6 +105,7 @@ function Home() {
 
   return (
     <div className="absolute w-full h-full flex flex-col">
+      { logoutIsOpen && <comp0.logout /> }
       <comp0.navbar />
       <comp0.sidebar
         page="/"
@@ -123,6 +129,7 @@ function Home() {
                 location="/"
                 handleGetDocs={handleGetDocs}
                 currentFolder={null}
+                position={insertPos}
               />
             )
           }
@@ -130,7 +137,8 @@ function Home() {
             <button
               type="button"
               className={`flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-lg hover:bg-gray-100 ${modal.insert && 'bg-gray-100'}`}
-              onClick={() => {
+              onClick={(event) => {
+                setInsertPos(event.clientX - 260);
                 setModal((prev) => ({
                   ...prev,
                   insert: !prev.insert,
@@ -145,15 +153,34 @@ function Home() {
             {
               selected.payload.length > 0 && (
                 <div className="flex items pr-2.5 border-0 border-r border-solid border-gray-300">
+                  {
+                    selected.types[selected.types.length - 1] === 'folder' ? (
+                      <Link
+                        to={`/folder${selected.payload[selected.payload.length - 1].url}`}
+                        type="button"
+                        className="p-2 hover:bg-gray-100 rounded-[50%]"
+                      >
+                        <icon.BiLinkExternal className="text-2xl" />
+                      </Link>
+                    ) : (
+                      <a
+                        href={`${axios.defaults.baseURL}/documents/${user._id}/file${selected.payload[selected.payload.length - 1].url}`}
+                        type="button"
+                        className="p-2 hover:bg-gray-100 rounded-[50%]"
+                      >
+                        <icon.BiLinkExternal className="text-2xl" />
+                      </a>
+                    )
+                  }
                   <button
                     type="button"
-                    className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                    className="p-2 hover:bg-gray-100 rounded-[50%]"
                   >
                     <icon.BiMessageSquareEdit className="text-2xl" />
                   </button>
                   <button
                     type="button"
-                    className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                    className="p-2 hover:bg-gray-100 rounded-[50%]"
                     onClick={handleTrashing}
                   >
                     <icon.BiTrashAlt className="text-2xl" />
@@ -163,7 +190,7 @@ function Home() {
             }
             <button
               type="button"
-              className={`p-2.5 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
+              className={`p-2 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
               onClick={() => {
                 setDetailSideIsOpen((prev) => !prev);
               }}
@@ -190,6 +217,7 @@ function Home() {
               setDetailSideIsOpen={setDetailSideIsOpen}
               selected={selected}
               setSelected={setSelected}
+              currentFolder={null}
             />
           </div>
         </div>
