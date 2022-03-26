@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 
@@ -9,6 +10,7 @@ import * as detail from '../components/detail';
 
 function DocInFolder() {
   const token = localStorage.getItem('token');
+  const { auth: { user }, modal: { logoutIsOpen } } = useSelector((state) => state);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -27,6 +29,8 @@ function DocInFolder() {
     insert: false,
     newFolder: false,
   });
+
+  const [insertPos, setInsertPos] = useState(0);
 
   const handleGetDocs = async () => {
     try {
@@ -95,7 +99,7 @@ function DocInFolder() {
       const { data } = await axios({
         method: 'post',
         url: '/trash',
-        data: selected.payload,
+        data: selected.payload.map(({ id }) => id),
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -105,6 +109,11 @@ function DocInFolder() {
 
       handleGetDocs();
       handleGetFolders();
+      setSelected((prev) => ({
+        ...prev,
+        types: [],
+        payload: [],
+      }));
     }
     catch (error0) {
       console.error(error0.message);
@@ -130,6 +139,7 @@ function DocInFolder() {
 
   return (
     <div className="absolute w-full h-full flex flex-col">
+      { logoutIsOpen && <comp0.logout /> }
       <comp0.navbar />
       <comp0.sidebar
         page="/"
@@ -153,6 +163,7 @@ function DocInFolder() {
                 location={location.pathname.replace(/.+?(?=[/])/, '')}
                 handleGetDocs={handleGetDocs}
                 currentFolder={currentFolder}
+                position={insertPos}
               />
             )
           }
@@ -165,12 +176,14 @@ function DocInFolder() {
                     flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-lg hover:bg-gray-100
                     ${item === currentFolder.path[currentFolder.path.length - 1] && modal.insert && 'bg-gray-100'}
                   `}
-                  onClick={() => {
+                  onClick={(event) => {
                     if (item === currentFolder.path[currentFolder.path.length - 1]) {
                       setModal((prev) => ({
                         ...prev,
                         insert: !prev.insert,
                       }));
+
+                      setInsertPos(event.clientX - 300);
                     } else {
                       navigate(item === '/' ? '/' : `/folder${currentFolder.location[index]}`);
                     }
@@ -191,15 +204,34 @@ function DocInFolder() {
             {
               selected.payload.length > 0 && (
                 <div className="flex items pr-2.5 border-0 border-r border-solid border-gray-300">
+                  {
+                    selected.types[selected.types.length - 1] === 'folder' ? (
+                      <Link
+                        to={`/folder${selected.payload[selected.payload.length - 1].url}`}
+                        type="button"
+                        className="p-2 hover:bg-gray-100 rounded-[50%]"
+                      >
+                        <icon.BiLinkExternal className="text-2xl" />
+                      </Link>
+                    ) : (
+                      <a
+                        href={`${axios.defaults.baseURL}/documents/${user._id}/file${selected.payload[selected.payload.length - 1].url}`}
+                        type="button"
+                        className="p-2 hover:bg-gray-100 rounded-[50%]"
+                      >
+                        <icon.BiLinkExternal className="text-2xl" />
+                      </a>
+                    )
+                  }
                   <button
                     type="button"
-                    className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                    className="p-2 hover:bg-gray-100 rounded-[50%]"
                   >
                     <icon.BiMessageSquareEdit className="text-2xl" />
                   </button>
                   <button
                     type="button"
-                    className="p-2.5 hover:bg-gray-100 rounded-[50%]"
+                    className="p-2 hover:bg-gray-100 rounded-[50%]"
                     onClick={handleTrashing}
                   >
                     <icon.BiTrashAlt className="text-2xl" />
@@ -209,7 +241,7 @@ function DocInFolder() {
             }
             <button
               type="button"
-              className={`p-2.5 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
+              className={`p-2 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
               onClick={() => {
                 setDetailSideIsOpen((prev) => !prev);
               }}
@@ -236,6 +268,7 @@ function DocInFolder() {
               setDetailSideIsOpen={setDetailSideIsOpen}
               selected={selected}
               setSelected={setSelected}
+              currentFolder={currentFolder}
             />
           </div>
         </div>
