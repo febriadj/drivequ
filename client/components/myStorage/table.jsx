@@ -20,11 +20,11 @@ function Table({
 
     if (doubleKeys.multipleSelect) {
       setSelected((prev) => {
-        const exists = prev.payload.find((item1) => item1 === item._id);
+        const exists = prev.payload.find((item1) => item1 === item.id);
         const indexOfItem = prev.payload.indexOf(exists);
 
         if (exists) {
-          const filter = prev.payload.filter((item2) => item2 !== item._id);
+          const filter = prev.payload.filter((item2) => item2 !== item.id);
           const newTypes = prev.types.filter((item1, index) => index !== indexOfItem);
           e.classList.remove('bg-gray-100');
           return {
@@ -36,14 +36,14 @@ function Table({
         e.classList.add('bg-gray-100');
         return {
           types: [...prev.types, item.type],
-          payload: [...prev.payload, item._id],
+          payload: [...prev.payload, { id: item.id, url: item.url }],
         };
       });
     } else {
       setSelected((prev) => ({
         ...prev,
         types: [item.type],
-        payload: [item._id],
+        payload: [{ id: item.id, url: item.url }],
       }));
 
       tr.map((item1) => item1.classList.remove('bg-gray-100'));
@@ -89,8 +89,9 @@ function Table({
                 onDoubleClick={() => navigate(`/folder${item.url}`)}
                 onClick={(event) => {
                   handleOnSelection(event, {
-                    _id: item._id,
+                    id: item._id,
                     type: item.type,
+                    url: item.url,
                   });
                 }}
               >
@@ -111,8 +112,9 @@ function Table({
                 className="h-12 grid grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
                 onClick={(event) => {
                   handleOnSelection(event, {
-                    _id: item._id,
+                    id: item._id,
                     type: item.type,
+                    url: item.url,
                   });
                 }}
               >
@@ -121,7 +123,7 @@ function Table({
                     /image/.test(item.mimetype) ? (
                       <span className="relative w-6 h-6 overflow-hidden flex justify-center items-center bg-gray-800">
                         <img
-                          src={`${axios.defaults.baseURL}/documents/file${item.url}`}
+                          src={`${axios.defaults.baseURL}/documents/${item.userId}/file${item.url}`}
                           alt=""
                           className="w-[100%] h-[100%]"
                         />
