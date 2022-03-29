@@ -7,6 +7,7 @@ function Insert({
   location,
   handleGetDocs,
   currentFolder,
+  position,
 }) {
   const token = localStorage.getItem('token');
 
@@ -45,7 +46,12 @@ function Insert({
   };
 
   return (
-    <div className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 translate-y-14 z-10">
+    <div
+      className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 z-10 translate-y-14"
+      style={{
+        transform: `translate(${position}px, 56px)`,
+      }}
+    >
       <div className="container py-3.5 grid">
         <button
           type="button"
