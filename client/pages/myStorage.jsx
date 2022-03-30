@@ -20,6 +20,7 @@ function Home() {
   });
 
   const [detailSideIsOpen, setDetailSideIsOpen] = useState(false);
+  const [detail640IsOpen, setDetail640IsOpen] = useState(false);
 
   const [modal, setModal] = useState({
     insert: false,
@@ -105,6 +106,14 @@ function Home() {
 
   return (
     <div className="absolute w-full h-full flex flex-col">
+      {
+        window.screen.width < 640 && detail640IsOpen && (
+          <detail.detail640
+            selected={selected}
+            setDetail640IsOpen={setDetail640IsOpen}
+          />
+        )
+      }
       { logoutIsOpen && <comp0.logout /> }
       <comp0.navbar />
       <comp0.sidebar
@@ -120,8 +129,8 @@ function Home() {
           />
         )
       }
-      <div className="pt-16 h-full grid grid-rows-2/auto-1fr ml-60 pl-5">
-        <div className="relative w-full bg-white pr-5 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
+      <div className="pt-16 h-full grid grid-rows-2/auto-1fr sm:ml-16 md:ml-56 sm:pl-5 pb-14 sm:pb-0">
+        <div className="relative w-full bg-white px-2.5 sm:pr-5 sm:pl-0 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
           {
             modal.insert && (
               <comp1.insert
@@ -133,12 +142,23 @@ function Home() {
               />
             )
           }
-          <div className="flex items-center" id="path">
+          <div className="flex items-center scrollbar scrollbar-thumb-gray-300" id="path">
             <button
               type="button"
               className={`flex items-center gap-1 py-1 pl-2.5 pr-1 rounded-lg hover:bg-gray-100 ${modal.insert && 'bg-gray-100'}`}
               onClick={(event) => {
-                setInsertPos(event.clientX - 260);
+                const screen = window.screen.width;
+                let pos;
+
+                if (screen < 640) {
+                  pos = 20;
+                } else if (screen > 640 && screen < 768) {
+                  pos = 90;
+                } else {
+                  pos = 234;
+                }
+
+                setInsertPos(event.clientX - pos);
                 setModal((prev) => ({
                   ...prev,
                   insert: !prev.insert,
@@ -176,7 +196,7 @@ function Home() {
                     type="button"
                     className="p-2 hover:bg-gray-100 rounded-[50%]"
                   >
-                    <icon.BiMessageSquareEdit className="text-2xl" />
+                    <icon.BiDownload className="text-2xl" />
                   </button>
                   <button
                     type="button"
@@ -190,9 +210,15 @@ function Home() {
             }
             <button
               type="button"
-              className={`p-2 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
+              className={`p-2 hover:bg-gray-100 rounded-[50%] ${(detailSideIsOpen || detail640IsOpen) && 'bg-gray-100'}`}
               onClick={() => {
-                setDetailSideIsOpen((prev) => !prev);
+                if (window.screen.width < 640) {
+                  if (selected.payload.length > 0) {
+                    setDetail640IsOpen((prev) => !prev);
+                  }
+                } else {
+                  setDetailSideIsOpen((prev) => !prev);
+                }
               }}
             >
               <icon.BiInfoCircle className="text-2xl" />
@@ -209,7 +235,7 @@ function Home() {
             />
           </div>
           <div className={`
-            relative overflow-hidden transition-all
+            relative overflow-hidden transition-all flex
             ${detailSideIsOpen ? 'w-96' : 'w-0'}
           `}
           >

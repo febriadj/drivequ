@@ -38,7 +38,7 @@ function ModalClear({
 
   return (
     <div className="fixed w-full h-full z-50 bg-gray-700/50 flex justify-center items-center">
-      <div className="bg-white p-5 rounded-lg w-[450px]">
+      <div className="bg-white p-5 rounded-lg w-[450px] mx-5">
         <h2 className="text-xl font-semibold">Delete Forever</h2>
         <p className="text-base mt-2.5 mb-8">All junk items will be deleted forever and you will not be able to recover them, are you sure & want to continue?</p>
         <span className="flex justify-end gap-2.5">

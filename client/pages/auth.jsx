@@ -9,7 +9,7 @@ function Auth() {
   }, [loginFormIsOpen]);
 
   return (
-    <div className="absolute w-full h-full grid grid-cols-2/auto-1fr">
+    <div className="absolute w-full h-full flex justify-center md:grid md:grid-cols-2/auto-1fr">
       <div className="relative w-[450px] h-full flex">
         {
           loginFormIsOpen
@@ -17,7 +17,7 @@ function Auth() {
             : <comp.register setLoginFormIsOpen={setLoginFormIsOpen} />
         }
       </div>
-      <div className="bg-gray-200"></div>
+      <div className="bg-gray-200 hidden md:block"></div>
     </div>
   );
 }

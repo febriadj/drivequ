@@ -17,6 +17,7 @@ function DocInFolder() {
 
   const [currentFolder, setCurrentFolder] = useState(null);
   const [detailSideIsOpen, setDetailSideIsOpen] = useState(false);
+  const [detail640IsOpen, setDetail640IsOpen] = useState(false);
 
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -138,7 +139,15 @@ function DocInFolder() {
   }, [location]);
 
   return (
-    <div className="absolute w-full h-full flex flex-col">
+    <div className="absolute w-full h-full flex flex-col overflow-hidden">
+      {
+        window.screen.width < 640 && detail640IsOpen && (
+          <detail.detail640
+            selected={selected}
+            setDetail640IsOpen={setDetail640IsOpen}
+          />
+        )
+      }
       { logoutIsOpen && <comp0.logout /> }
       <comp0.navbar />
       <comp0.sidebar
@@ -154,8 +163,8 @@ function DocInFolder() {
           />
         )
       }
-      <div className="pt-16 h-full grid grid-rows-2/auto-1fr ml-60 pl-5">
-        <div className="relative w-full bg-white pr-5 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
+      <div className="pt-16 h-full grid grid-rows-2/auto-1fr sm:ml-16 md:ml-56 sm:pl-5 pb-14 sm:pb-0">
+        <div className="relative w-full bg-white px-2.5 gap-5 sm:pr-5 sm:pl-0 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
           {
             modal.insert && (
               <comp1.insert
@@ -167,7 +176,7 @@ function DocInFolder() {
               />
             )
           }
-          <div className="flex items-center" id="path">
+          <div className="flex items-center pb-2 translate-y-1 scrollbar scrollbar-thumb-gray-200 scrollbar-thin" id="path">
             {
               currentFolder && currentFolder.path.map((item, index) => (
                 <button
@@ -178,19 +187,30 @@ function DocInFolder() {
                   `}
                   onClick={(event) => {
                     if (item === currentFolder.path[currentFolder.path.length - 1]) {
+                      const screen = window.screen.width;
+                      let pos;
+                      const less = event.clientX < (screen / 2);
+
+                      if (screen < 640) {
+                        pos = 20;
+                      } else if (screen > 640 && screen < 768) {
+                        pos = 120;
+                      } else {
+                        pos = 300;
+                      }
+
+                      setInsertPos(event.clientX - (less ? pos : pos + 120));
                       setModal((prev) => ({
                         ...prev,
                         insert: !prev.insert,
                       }));
-
-                      setInsertPos(event.clientX - 300);
                     } else {
                       navigate(item === '/' ? '/' : `/folder${currentFolder.location[index]}`);
                     }
                   }}
                   key={item}
                 >
-                  <h3 className="text-xl">{item}</h3>
+                  <h3 className="text-xl whitespace-nowrap">{item}</h3>
                   {
                     item === currentFolder.path[currentFolder.path.length - 1]
                       ? <icon.BiChevronDown className="text-2xl" />
@@ -227,7 +247,7 @@ function DocInFolder() {
                     type="button"
                     className="p-2 hover:bg-gray-100 rounded-[50%]"
                   >
-                    <icon.BiMessageSquareEdit className="text-2xl" />
+                    <icon.BiDownload className="text-2xl" />
                   </button>
                   <button
                     type="button"
@@ -243,7 +263,13 @@ function DocInFolder() {
               type="button"
               className={`p-2 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
               onClick={() => {
-                setDetailSideIsOpen((prev) => !prev);
+                if (window.screen.width < 640) {
+                  if (selected.payload.length > 0) {
+                    setDetail640IsOpen((prev) => !prev);
+                  }
+                } else {
+                  setDetailSideIsOpen((prev) => !prev);
+                }
               }}
             >
               <icon.BiInfoCircle className="text-2xl" />

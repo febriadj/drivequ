@@ -41,7 +41,7 @@ function NewFolder({
           ...prev,
           newFolder: false,
         }));
-      }, 1000);
+      }, 800);
     }
     catch (error0) {
       console.error(error0.response.data.message);
@@ -56,8 +56,8 @@ function NewFolder({
   };
 
   return (
-    <div className="fixed w-full h-full z-50 bg-gray-700/50 flex justify-center items-center">
-      <div className="w-[500px] p-5 bg-white rounded-lg">
+    <div className="fixed w-full h-full z-40 bg-gray-700/50 flex justify-center items-center">
+      <div className="w-[500px] p-5 bg-white rounded-lg mx-5">
         <div className="flex items-center gap-3.5">
           <icon.BiFolderPlus className="text-2xl" />
           <h2 className="text-xl font-semibold">New Folder</h2>

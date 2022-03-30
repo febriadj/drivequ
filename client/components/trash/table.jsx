@@ -68,13 +68,13 @@ function Table({
 
   return (
     <div className="absolute w-full flex mt-20">
-      <table className="w-full border-collapse mr-5">
+      <table className="w-full border-collapse md:mr-5">
         <thead>
-          <tr className="h-12 grid grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300">
+          <tr className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300">
             <td>Name</td>
-            <td>Mimetype</td>
-            <td>Published</td>
-            <td>Size</td>
+            <td className="hidden md:block">Mimetype</td>
+            <td className="hidden md:block">Published</td>
+            <td className="hidden sm:block">Size</td>
           </tr>
         </thead>
         <tbody>
@@ -82,7 +82,7 @@ function Table({
             documents.map((item) => (
               <tr
                 key={item._id}
-                className="h-12 grid grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
+                className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
                 onClick={(event) => {
                   handleOnSelection(event, {
                     id: item._id,
@@ -121,17 +121,17 @@ function Table({
                 }
                 {
                   item.type === 'file' ? (
-                    <td className="truncate">{item.mimetype}</td>
+                    <td className="truncate hidden md:block">{item.mimetype}</td>
                   ) : (
-                    <td><span className="block w-3 h-px bg-black"></span></td>
+                    <td><span className="w-3 h-px bg-black hidden md:block"></span></td>
                   )
                 }
-                <td className="truncate">{helper.formatDate(item.createdAt)}</td>
+                <td className="truncate hidden md:block">{helper.formatDate(item.createdAt)}</td>
                 {
                   item.type === 'file' ? (
-                    <td className="truncate">{helper.bytesToSize(item.size)}</td>
+                    <td className="truncate hidden sm:block">{helper.bytesToSize(item.size)}</td>
                   ) : (
-                    <td><span className="block w-3 h-px bg-black"></span></td>
+                    <td><span className="w-3 h-px bg-black hidden sm:block"></span></td>
                   )
                 }
               </tr>

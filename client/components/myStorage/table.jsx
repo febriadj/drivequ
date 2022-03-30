@@ -71,13 +71,13 @@ function Table({
 
   return (
     <div className="absolute w-full flex">
-      <table className="w-full border-collapse mr-5">
+      <table className="w-full border-collapse md:mr-5">
         <thead>
-          <tr className="h-12 grid grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300">
+          <tr className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300">
             <td>Name</td>
-            <td>Mimetype</td>
-            <td>Published</td>
-            <td>Size</td>
+            <td className="hidden md:block">Mimetype</td>
+            <td className="hidden md:block">Published</td>
+            <td className="hidden sm:block">Size</td>
           </tr>
         </thead>
         <tbody>
@@ -85,7 +85,7 @@ function Table({
             folders.map((item) => (
               <tr
                 key={item._id}
-                className="h-12 grid grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
+                className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
                 onDoubleClick={() => navigate(`/folder${item.url}`)}
                 onClick={(event) => {
                   handleOnSelection(event, {
@@ -99,9 +99,9 @@ function Table({
                   <icon.BiFolder className="text-2xl" />
                   <p className="text-base truncate">{item.name}</p>
                 </td>
-                <td><span className="block w-3 h-px bg-black"></span></td>
-                <td className="truncate">{helper.formatDate(item.createdAt)}</td>
-                <td><span className="block w-3 h-px bg-black"></span></td>
+                <td className="hidden md:block"><span className="block w-3 h-px bg-black"></span></td>
+                <td className="hidden md:block truncate">{helper.formatDate(item.createdAt)}</td>
+                <td className="hidden sm:block"><span className="block w-3 h-px bg-black"></span></td>
               </tr>
             ))
           }
@@ -109,7 +109,7 @@ function Table({
             documents.map((item) => (
               <tr
                 key={item._id}
-                className="h-12 grid grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
+                className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
                 onClick={(event) => {
                   handleOnSelection(event, {
                     id: item._id,
@@ -134,9 +134,9 @@ function Table({
                   }
                   <p className="truncate">{`${item.filename}.${item.format}`}</p>
                 </td>
-                <td className="truncate">{item.mimetype}</td>
-                <td className="truncate">{helper.formatDate(item.createdAt)}</td>
-                <td className="truncate">{helper.bytesToSize(item.size)}</td>
+                <td className="hidden md:block truncate">{item.mimetype}</td>
+                <td className="hidden md:block truncate">{helper.formatDate(item.createdAt)}</td>
+                <td className="hidden sm:block truncate">{helper.bytesToSize(item.size)}</td>
               </tr>
             ))
           }

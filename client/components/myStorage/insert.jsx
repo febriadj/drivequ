@@ -18,6 +18,7 @@ function Insert({
       fd.append('file', event.target.files[0]);
       fd.append('location', location);
       fd.append('parents', currentFolder ? [...currentFolder.parents, currentFolder._id] : []);
+      fd.append('path', currentFolder ? [...currentFolder.path] : ['/']);
 
       const request = await axios({
         method: 'post',
@@ -38,7 +39,7 @@ function Insert({
           ...prev,
           insert: false,
         }));
-      }, 1000);
+      }, 800);
     }
     catch (error0) {
       console.error(error0.message);

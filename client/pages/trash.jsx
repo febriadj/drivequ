@@ -101,8 +101,8 @@ function Trash() {
           />
         )
       }
-      <div className="pt-16 h-full grid grid-rows-2/auto-1fr ml-60 pl-5">
-        <div className="relative w-full bg-white pr-5 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
+      <div className="pt-16 h-full grid grid-rows-2/auto-1fr sm:ml-16 md:ml-56 sm:pl-5">
+        <div className="relative w-full bg-white pl-2.5 sm:pl-0 pr-2.5 sm:pr-5 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
           <div className="flex items-center" id="path">
             <h2 className="text-xl">Trash Bin</h2>
           </div>
@@ -141,11 +141,11 @@ function Trash() {
         <div className="w-full grid grid-cols-2/1fr-auto">
           <div className="relative overflow-y-scroll">
             <div className="absolute w-full flex items-center h-14">
-              <span className="w-full h-full flex justify-between items-center bg-gray-100 mt-5 mr-5 px-5 rounded-lg">
+              <span className="w-full h-full flex justify-between items-center bg-gray-100 mt-5 mx-2.5 sm:ml-0 md:mr-5 px-5 rounded-lg">
                 <p>Items in trash will be deleted forever after 7 days</p>
                 <button
                   type="button"
-                  className="bg-gray-200 hover:bg-gray-300 py-1.5 px-3.5 rounded-md"
+                  className="bg-gray-200 hover:bg-gray-300 py-1.5 px-3.5 rounded-md overflow-hidden"
                   onClick={() => {
                     setModal((prev) => ({
                       ...prev,
@@ -153,7 +153,7 @@ function Trash() {
                     }));
                   }}
                 >
-                  <p>Clear Storage</p>
+                  <p className="truncate">Clear Trash</p>
                 </button>
               </span>
             </div>
