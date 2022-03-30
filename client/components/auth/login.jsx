@@ -39,7 +39,7 @@ function Login({ setLoginFormIsOpen }) {
         message: data.message,
       }));
 
-      const obj = JSON.stringify({ remember: remember ? form.email : null });
+      const obj = JSON.stringify({ remember: remember ? form.email : '' });
       localStorage.setItem('configs', obj);
       localStorage.setItem('token', data.payload);
 
@@ -75,7 +75,7 @@ function Login({ setLoginFormIsOpen }) {
           <span className="block w-1 h-1 bg-black rounded-[50%]"></span>
           <h1 className="text-base opacity-50">Sign Up</h1>
         </span>
-        <p>{`${JSON.parse(configs).remember ? 'Welcome back' : 'Welcome to CloudSync'}, please login to your account and enjoy our service`}</p>
+        <p>{`${configs && JSON.parse(configs).remember ? 'Welcome back' : 'Welcome to CloudSync'}, please login to your account and enjoy our service`}</p>
       </div>
       <form method="post" className="w-full grid gap-2.5 my-10" onSubmit={handleSubmit}>
         <label htmlFor="email" className={fieldStyle}>
