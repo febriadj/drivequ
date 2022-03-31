@@ -20,6 +20,11 @@ const DocModel = model('documents', new Schema({
     type: Schema.Types.String,
     default: '',
   },
+  path: {
+    type: Schema.Types.Array,
+    required: true,
+    default: ['/'],
+  },
   location: {
     type: Schema.Types.String,
     required: true,
