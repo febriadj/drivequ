@@ -1,4 +1,4 @@
-const path = require('path');
+const nodePath = require('path');
 const { IncomingForm } = require('formidable');
 const mv = require('mv');
 const DocModel = require('../../database/models/document');
@@ -16,6 +16,7 @@ exports.insert = async (req, res) => {
       const {
         location = '/',
         permission = 'public',
+        path = ['/'],
         parents = [],
       } = fields;
 
@@ -49,6 +50,7 @@ exports.insert = async (req, res) => {
             location,
             url: `/${filename}`,
             parents: parents.length > 0 ? parents.split(',') : [],
+            path: path.length > 1 ? path.split(',') : ['/'],
             mimetype,
             size,
             permission,
@@ -149,7 +151,7 @@ exports.find = async (req, res) => {
 
 exports.open = async (req, res) => {
   try {
-    const file = await path.resolve(__dirname, `../../../uploads/${req.params.id}/${req.params.filename}`);
+    const file = await nodePath.resolve(__dirname, `../../../uploads/${req.params.id}/${req.params.filename}`);
     res.sendFile(file);
   }
   catch (error0) {
