@@ -81,23 +81,23 @@ exports.find = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const query = {
-      $and: [
-        { userId: { $eq: req.user.id } },
-        { _id: { $in: req.body } },
-        { trashed: { $eq: true } },
+      $or: [
+        {
+          $and: [
+            { userId: { $eq: req.user.id } },
+            { _id: { $in: req.body } },
+            { trashed: { $eq: true } },
+          ],
+        },
+        {
+          parents: {
+            $elemMatch: { $in: req.body },
+          },
+        },
       ],
     };
 
     const docs = await DocModel.find(query);
-    const folderUrl = (await FolderModel.find(query)).map(({ url }) => url);
-
-    await FolderModel.deleteMany({
-      location: {
-        $elemMatch: {
-          $in: folderUrl,
-        },
-      },
-    });
 
     await DocModel.deleteMany(query);
     await FolderModel.deleteMany(query);
