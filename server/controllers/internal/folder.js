@@ -8,10 +8,25 @@ exports.insert = async (req, res) => {
       name,
       privated = false,
       description = '',
-      location,
-      path,
+      location = ['/'],
+      path = [],
       parents = [],
     } = req.body;
+
+    const folderNameExists = await FolderModel.findOne({
+      $and: [
+        { userId: { $eq: req.user.id } },
+        { $expr: { $eq: [{ $last: '$location' }, location[location.length - 1]] } },
+        { name: { $eq: name } },
+      ],
+    });
+
+    if (folderNameExists) {
+      const newError = {
+        message: 'You cannot give the same folder name in the same location',
+      };
+      throw newError;
+    }
 
     const folder = await new FolderModel({
       userId: req.user.id,
@@ -31,11 +46,12 @@ exports.insert = async (req, res) => {
     });
   }
   catch (error0) {
+    const { statusCode, message } = error0;
     response({
       res,
-      message: error0.message,
+      httpStatusCode: statusCode || 400,
       success: false,
-      httpStatusCode: 400,
+      message,
     });
   }
 };
