@@ -8,7 +8,8 @@
     "server-dev": "nodemon server/index.js",
     "client-build": "webpack --config ./webpack.prod.js",
     "client-dev": "webpack serve --config ./webpack.dev.js",
-    "dev": "concurrently \"npm run server-dev\" \"npm run client-dev\""
+    "dev": "concurrently \"npm run server-dev\" \"npm run client-dev\"",
+    "heroku-postbuild": "npm install && npm run client-build"
   },
   "repository": {
     "type": "git",
