@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "storage-service is a file storage service that can be integrated with various platforms such as web and mobile",
   "main": "server/index.js",
+  "engines": {
+    "node": "16.14.1"
+  },
   "scripts": {
     "server-start": "node server/index.js",
     "server-dev": "nodemon server/index.js",
