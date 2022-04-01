@@ -9,6 +9,10 @@ function NewFolder({
   location,
 }) {
   const token = localStorage.getItem('token');
+  const [response, setResponse] = useState({
+    success: true,
+    message: '',
+  });
 
   const [form, setForm] = useState({
     name: '',
@@ -35,6 +39,11 @@ function NewFolder({
 
       if (!data.success) throw data;
       handleGetFolders();
+      setResponse((prev) => ({
+        ...prev,
+        success: true,
+        message: data.message,
+      }));
 
       setTimeout(() => {
         setModal((prev) => ({
@@ -44,7 +53,11 @@ function NewFolder({
       }, 800);
     }
     catch (error0) {
-      console.error(error0.response.data.message);
+      setResponse((prev) => ({
+        ...prev,
+        success: false,
+        message: error0.response.data.message,
+      }));
     }
   };
 
@@ -62,7 +75,7 @@ function NewFolder({
           <icon.BiFolderPlus className="text-2xl" />
           <h2 className="text-xl font-semibold">New Folder</h2>
         </div>
-        <form method="post" className="grid gap-2.5 mt-5" onSubmit={handleSubmit}>
+        <form method="post" className="grid mt-2.5" onSubmit={handleSubmit}>
           <span className="grid grid-cols-2/1fr-auto items-end gap-2.5 border-0 border-b border-solid border-gray-300">
             <input
               type="text"
@@ -88,10 +101,11 @@ function NewFolder({
               <p>{form.privated ? 'Private' : 'Public'}</p>
             </button>
           </span>
+          <p className={`text-sm mt-1 ${response.success ? 'text-black' : 'text-red-900'}`}>{response.message}</p>
           <textarea
             name="description"
             id="description"
-            className="w-full h-24 resize-none"
+            className="w-full h-24 resize-none my-2.5"
             placeholder="Description"
             onChange={handleChange}
           >
