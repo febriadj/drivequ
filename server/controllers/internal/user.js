@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
       },
       app,
       company,
-      accType,
+      type: accType,
     }).save();
 
     response({
@@ -52,6 +52,14 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await UserModel.findOne({ email: { $eq: email } });
+
+    if (!user) {
+      const newError = {
+        message: 'Unregistered user email',
+        statusCode: 412,
+      };
+      throw newError;
+    }
 
     const compare = await bcrypt.compare(password, user.password);
 
