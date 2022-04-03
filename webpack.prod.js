@@ -1,5 +1,5 @@
 const path = require('path');
-const config = require('./webpack.config');
+const config = require('./webpack.common');
 
 module.exports = {
   mode: 'production',
