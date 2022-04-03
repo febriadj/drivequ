@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const config = require('../config');
 
 module.exports = async () => {
   try {
-    const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/storage_service';
+    const { uri } = config.database;
     await mongoose.connect(uri);
 
     console.log('database connected');
