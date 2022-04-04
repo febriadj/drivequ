@@ -98,7 +98,7 @@ exports.find = async (req, res) => {
             { _id: { $eq: q.id } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
       else if (q.location) {
         documents = await DocModel.find({
@@ -107,7 +107,7 @@ exports.find = async (req, res) => {
             { location: { $eq: q.location } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
       else if (q.url) {
         documents = await DocModel.findOne({
@@ -116,7 +116,7 @@ exports.find = async (req, res) => {
             { url: { $eq: q.url } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
       else {
         documents = await DocModel.find({
@@ -124,13 +124,13 @@ exports.find = async (req, res) => {
             { userId: { $eq: req.user.id } },
             { trashed: { $eq: q.trashed ?? false } },
           ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
     }
     else {
       documents = await DocModel.find({
         userId: { $eq: req.user.id },
-      }).sort({ filename: 1 });
+      }).sort({ createdAt: -1 });
     }
 
     response({
@@ -189,6 +189,35 @@ exports.trashed = async (req, res) => {
       message: error0.message,
       success: false,
       httpStatusCode: 400,
+    });
+  }
+};
+
+exports.size = async (req, res) => {
+  try {
+    const documents = await DocModel.find({
+      $and: [
+        { userId: { $eq: req.user.id } },
+        { trashed: { $eq: req.query.trashed } },
+      ],
+    });
+
+    const size = documents.map((args) => args.size).reduce((acc, curr) => acc + curr);
+
+    response({
+      res,
+      message: 'Request successful',
+      payload: size,
+    });
+  }
+  catch (error0) {
+    const { statusCode, message } = error0;
+
+    response({
+      res,
+      success: false,
+      message,
+      httpStatusCode: statusCode || 400,
     });
   }
 };
