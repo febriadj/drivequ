@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
+import * as helper from '../helpers';
+
+import { zipDownloadModal } from '../redux/features/modal';
+import { totalSize } from '../redux/features/document';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/myStorage';
@@ -10,7 +14,11 @@ import * as detail from '../components/detail';
 
 function DocInFolder() {
   const token = localStorage.getItem('token');
-  const { auth: { user }, modal: { logoutIsOpen } } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const {
+    auth: { user },
+    modal: { logoutIsOpen, zipDownloadIsOpen },
+  } = useSelector((state) => state);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -97,7 +105,7 @@ function DocInFolder() {
 
   const handleTrashing = async () => {
     try {
-      const { data } = await axios({
+      await axios({
         method: 'post',
         url: '/trash',
         data: selected.payload.map(({ id }) => id),
@@ -106,8 +114,7 @@ function DocInFolder() {
         },
       });
 
-      if (!data.success) throw data;
-
+      dispatch(totalSize(await helper.totalSize({ trashed: false })));
       handleGetDocs();
       handleGetFolders();
       setSelected((prev) => ({
@@ -128,7 +135,9 @@ function DocInFolder() {
 
     setDetailSideIsOpen(false);
     setModal((prev) => ({ ...prev, insert: false }));
-    setSelected({ types: [], payload: [] });
+    setSelected((prev) => ({
+      ...prev, types: [], payload: [],
+    }));
 
     const ctx = document.querySelectorAll('#path button');
     let i = 0;
@@ -149,6 +158,7 @@ function DocInFolder() {
         )
       }
       { logoutIsOpen && <comp0.logout /> }
+      { zipDownloadIsOpen && <comp0.zipDownload /> }
       <comp0.navbar />
       <comp0.sidebar
         page="/"
@@ -246,6 +256,14 @@ function DocInFolder() {
                   <button
                     type="button"
                     className="p-2 hover:bg-gray-100 rounded-[50%]"
+                    onClick={() => {
+                      dispatch(zipDownloadModal());
+
+                      setTimeout(() => {
+                        helper.zipDownload(selected.payload.map(({ id }) => id));
+                        dispatch(zipDownloadModal());
+                      }, 800);
+                    }}
                   >
                     <icon.BiDownload className="text-2xl" />
                   </button>
