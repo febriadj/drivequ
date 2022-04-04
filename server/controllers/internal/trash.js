@@ -52,7 +52,7 @@ exports.find = async (req, res) => {
       ],
     };
 
-    const docs = await DocModel.find(query).sort({ name: 1 });
+    const docs = await DocModel.find(query).sort({ updatedAt: -1 });
     const folders = await FolderModel.find(query).sort({ name: 1 });
 
     const d = docs.filter((e) => !folders.map(({ url }) => url).includes(e.location));
@@ -60,12 +60,10 @@ exports.find = async (req, res) => {
       !folders.map(({ url }) => url).includes(e.location[e.location.length - 1])
     ));
 
-    const merge = [...d, ...f].sort((a, b) => a.name > b.name);
-
     response({
       res,
       message: '',
-      payload: merge,
+      payload: { folders: f, documents: d },
     });
   }
   catch (error0) {
