@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
+import * as helper from '../helpers';
+
+import { zipDownloadModal } from '../redux/features/modal';
+import { totalSize } from '../redux/features/document';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/myStorage';
@@ -10,7 +14,12 @@ import * as detail from '../components/detail';
 
 function Home() {
   const token = localStorage.getItem('token');
-  const { auth: { user }, modal: { logoutIsOpen } } = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  const {
+    auth: { user },
+    modal: { logoutIsOpen, zipDownloadIsOpen },
+  } = useSelector((state) => state);
 
   const [documents, setDocuments] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -41,38 +50,30 @@ function Home() {
         },
       });
 
-      if (!data.success) throw data;
       setDocuments(data.payload);
     }
     catch (error0) {
-      console.error(error0.message);
+      console.error(error0.response.data.message);
     }
   };
 
   const handleGetFolders = async () => {
     try {
-      const request = await axios.get('/folders', {
-        params: {
-          location: '/',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const { data } = await axios.get('/folders', {
+        params: { location: '/' },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
-      const { data } = request;
-      if (!data.success) throw data;
 
       setFolders(data.payload);
     }
     catch (error0) {
-      console.error(error0.message);
+      console.error(error0.response.data.message);
     }
   };
 
   const handleTrashing = async () => {
     try {
-      const { data } = await axios({
+      await axios({
         method: 'post',
         url: '/trash',
         data: selected.payload.map(({ id }) => id),
@@ -81,13 +82,12 @@ function Home() {
         },
       });
 
-      if (!data.success) throw data;
-
+      dispatch(totalSize(await helper.totalSize({ trashed: false })));
       handleGetDocs();
       handleGetFolders();
     }
     catch (error0) {
-      console.error(error0.message);
+      console.error(error0.response.data.message);
     }
   };
 
@@ -115,6 +115,7 @@ function Home() {
         )
       }
       { logoutIsOpen && <comp0.logout /> }
+      { zipDownloadIsOpen && <comp0.zipDownload /> }
       <comp0.navbar />
       <comp0.sidebar
         page="/"
@@ -195,6 +196,13 @@ function Home() {
                   <button
                     type="button"
                     className="p-2 hover:bg-gray-100 rounded-[50%]"
+                    onClick={async () => {
+                      dispatch(zipDownloadModal());
+                      const zip = await helper.zipDownload(selected.payload.map(({ id }) => id));
+                      if (zip) {
+                        setTimeout(() => dispatch(zipDownloadModal()), 800);
+                      }
+                    }}
                   >
                     <icon.BiDownload className="text-2xl" />
                   </button>
