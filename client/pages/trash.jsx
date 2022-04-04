@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as icon from 'react-icons/bi';
+
+import * as helper from '../helpers';
+import { totalSize } from '../redux/features/document';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/trash';
@@ -9,9 +12,14 @@ import * as detail from '../components/detail';
 
 function Trash() {
   const token = localStorage.getItem('token');
+  const dispatch = useDispatch();
+
   const { modal: { logoutIsOpen } } = useSelector((state) => state);
 
+  const [folders, setFolders] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const [trashSize, setTrashSize] = useState(0);
+
   const [selected, setSelected] = useState({
     types: [],
     payload: [],
@@ -34,8 +42,9 @@ function Trash() {
         },
       });
 
-      if (!data.success) throw data;
-      setDocuments(data.payload);
+      setTrashSize(await helper.totalSize({ trashed: true }));
+      setFolders(data.payload.folders);
+      setDocuments(data.payload.documents);
     }
     catch (error0) {
       console.error(error0.response.data.message);
@@ -63,16 +72,17 @@ function Trash() {
 
   const handleRecovery = async () => {
     try {
-      const { data } = await axios({
+      await axios({
         method: 'put',
         url: '/trash/recover',
-        data: selected.payload.map(({ id }) => id),
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: selected.payload.map(({ id }) => id),
       });
 
-      if (!data.success) throw data;
+      setTrashSize(await helper.totalSize({ trashed: true }));
+      dispatch(totalSize(await helper.totalSize({ trashed: false })));
       handleGetTrashed();
     }
     catch (error0) {
@@ -81,7 +91,7 @@ function Trash() {
   };
 
   useEffect(() => {
-    document.title = 'Trash - CloudiSync';
+    document.title = 'Trash - CloudSync';
     handleGetTrashed();
   }, []);
 
@@ -98,6 +108,8 @@ function Trash() {
             handleGetTrashedDocs={handleGetTrashed}
             setModal={setModal}
             documents={documents}
+            folders={folders}
+            setTrashSize={setTrashSize}
           />
         )
       }
@@ -159,8 +171,10 @@ function Trash() {
             </div>
             <comp1.table
               documents={documents}
+              folders={folders}
               location="/"
               setSelected={setSelected}
+              size={trashSize}
             />
           </div>
           <div className={`
