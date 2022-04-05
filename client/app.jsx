@@ -3,9 +3,11 @@ import axios from 'axios';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import './style.css';
+import * as helper from './helpers';
 
 import * as page from './pages';
 import { login, logout } from './redux/features/auth';
+import { totalSize } from './redux/features/document';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -21,6 +23,7 @@ function App() {
       });
 
       dispatch(login(data.payload));
+      dispatch(totalSize(await helper.totalSize({ trashed: false })));
     }
     catch (error0) {
       console.error(error0.response.data.message);
