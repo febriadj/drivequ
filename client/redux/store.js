@@ -5,6 +5,7 @@ const store = configureStore({
   reducer: {
     auth: slice.auth,
     modal: slice.modal,
+    document: slice.document,
   },
 });
 
