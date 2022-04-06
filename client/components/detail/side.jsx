@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 import * as helper from '../../helpers';
+import { zipDownloadModal } from '../../redux/features/modal';
 
 function Side({
   selected,
@@ -10,6 +12,7 @@ function Side({
   currentFolder,
 }) {
   const token = localStorage.getItem('token');
+  const dispatch = useDispatch();
 
   const [doc, setDoc] = useState(null);
 
@@ -55,6 +58,8 @@ function Side({
     (async () => {
       if (selected.payload.length > 0) {
         await handleGetDoc();
+      } else {
+        setDoc(null);
       }
     })();
   }, [selected]);
@@ -103,12 +108,9 @@ function Side({
           }
           {
             doc && doc.type === 'file' && !/image/i.test(doc.mimetype) && (
-              <iframe
-                title="frame"
-                src={`${axios.defaults.baseURL}/documents/${doc.userId}/file${doc && doc.url}`}
-                className="w-full h-60 block bg-gray-100 overflow-hidden"
-              >
-              </iframe>
+              <span className="w-full h-60 bg-gray-100 flex justify-center items-center">
+                <icon.BiFileBlank className="text-6xl" />
+              </span>
             )
           }
           {
@@ -120,94 +122,66 @@ function Side({
           }
         </div>
         {
-          doc && doc.type === 'file' && (
-            <div className="grid gap-5 py-5">
-              <div className="flex">
-                <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-400 rounded-xl p-2.5">
-                  { doc.privated ? <icon.BiLock className="text-2xl" /> : <icon.BiGlobe className="text-2xl" /> }
-                  <p>{doc.privated ? 'private' : 'public'}</p>
+          doc && (
+            <div className="py-5">
+              <div className="flex justify-between mb-5">
+                <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-400 rounded-md py-1.5 px-2.5 hover:bg-gray-200 cursor-default">
+                  { doc.privated ? <icon.BiLock className="text-xl" /> : <icon.BiGlobe className="text-xl" /> }
+                  <p>{doc.privated ? 'Private' : 'Public'}</p>
                 </span>
+                <button
+                  type="button"
+                  className="bg-blue-500 text-white flex items-center rounded-md overflow-hidden group hover:bg-blue-600"
+                  onClick={async () => {
+                    dispatch(zipDownloadModal());
+                    const zip = await helper.zipDownload([doc._id]);
+                    if (zip) {
+                      setTimeout(() => dispatch(zipDownloadModal()), 800);
+                    }
+                  }}
+                >
+                  <p className="px-2.5">Download</p>
+                  <span className="bg-blue-600 p-1 group-hover:bg-blue-700">
+                    <icon.BiDownArrowAlt className="text-2xl" />
+                  </span>
+                </button>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold">System Property</h2>
-                <table className="border-collapse mt-2.5">
-                  <tbody>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Original</td>
-                      <td className="truncate px-0">{doc.originalFilename}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">URL</td>
-                      <td className="truncate px-0">{doc.url}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Location</td>
-                      <td className="truncate px-0">{doc.location}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Mimetype</td>
-                      <td className="truncate px-0">{doc.mimetype}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Size</td>
-                      <td className="truncate px-0">{helper.bytesToSize(doc.size)}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Pubished</td>
-                      <td className="truncate px-0">{helper.formatDate(doc.createdAt)}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Updated</td>
-                      <td className="truncate px-0">{helper.formatDate(doc.updatedAt)}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <h1 className="text-xl font-semibold">System Property</h1>
+              <div className="grid grid-cols-2/auto-1fr gap-5 pt-2.5">
+                <div className="grid gap-1 opacity-50 pb-5">
+                  <p>Name</p>
+                  <p>Original</p>
+                  <p>URL</p>
+                  <p>Location</p>
+                  <p>Mimetype</p>
+                  <p>Size</p>
+                  <p>Published</p>
+                  <p>Updated</p>
+                </div>
+                <div className="grid overflow-x-auto gap-1 pr-2.5 pb-5 scrollbar scrollbar-thin scrollbar-thumb-gray-200">
+                  <p className="whitespace-nowrap">{doc.type === 'file' ? `${doc.filename}.${doc.format}` : doc.name}</p>
+                  <p className="whitespace-nowrap">{doc.type === 'file' ? doc.originalFilename : '-'}</p>
+                  <p className="whitespace-nowrap">{doc.url}</p>
+                  <span className="whitespace-nowrap flex items-center">
+                    {doc.type === 'file' && doc.path.length > 1 && doc.path.slice(1, doc.path.length).map((item) => <p key={item}>{`/${item}`}</p>)}
+                    {doc.type === 'folder' && doc.path.length > 2 && doc.path.slice(1, doc.path.length - 1).map((item) => <p key={item}>{`/${item}`}</p>)}
+                    {doc.type === 'file' && doc.path.length <= 1 && <p>/</p>}
+                    {doc.type === 'folder' && doc.path.length <= 2 && <p>/</p>}
+                  </span>
+                  <p className="whitespace-nowrap">{doc.type === 'file' ? doc.mimetype : '-'}</p>
+                  <p className="whitespace-nowrap">{doc.type === 'file' ? helper.bytesToSize(doc.size) : '-'}</p>
+                  <p className="whitespace-nowrap">{helper.formatDate(doc.createdAt)}</p>
+                  <p className="whitespace-nowrap">{helper.formatDate(doc.updatedAt)}</p>
+                </div>
               </div>
-            </div>
-          )
-        }
-        {
-          doc && doc.type === 'folder' && (
-            <div className="grid gap-5 py-5">
-              <div className="flex">
-                <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-400 rounded-xl p-2.5">
-                  { doc.privated ? <icon.BiLock className="text-2xl" /> : <icon.BiGlobe className="text-2xl" /> }
-                  <p>{doc.privated ? 'private' : 'public'}</p>
-                </span>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">System Property</h2>
-                <table className="border-collapse mt-2.5">
-                  <tbody>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">URL</td>
-                      <td className="truncate px-0">{doc.url}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Location</td>
-                      <td className="truncate px-0 flex">
-                        {
-                          doc.path.slice(1, doc.path.length - 1).map((item) => (
-                            <p key={item}>{`/${item}`}</p>
-                          ))
-                        }
-                      </td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Pubished</td>
-                      <td className="truncate px-0">{helper.formatDate(doc.createdAt)}</td>
-                    </tr>
-                    <tr className="grid grid-cols-2/auto-1fr overflow-hidden">
-                      <td className="w-24 opacity-70 px-0">Updated</td>
-                      <td className="truncate px-0">{helper.formatDate(doc.updatedAt)}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <span>
-                <h2 className="text-xl font-semibold mb-2.5">Description</h2>
-                <p>{doc.description}</p>
-              </span>
+              {
+                doc.type === 'folder' && (
+                  <div className="pt-5">
+                    <h1 className="text-xl font-semibold">Description</h1>
+                    <p>{doc.description.length > 0 ? doc.description : '...'}</p>
+                  </div>
+                )
+              }
             </div>
           )
         }
