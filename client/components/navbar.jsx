@@ -11,7 +11,7 @@ function Navbar() {
       {
         profileIsOpen && <Profile setProfileIsOpen={setProfileIsOpen} />
       }
-      <div className="w-full py-2 px-2.5 gap-5 sm:gap-0 sm:px-5 grid grid-cols-2/1fr-auto sm:grid-cols-3/auto-1fr-0.5fr items-center">
+      <div className="w-full py-2 px-3.5 gap-5 sm:gap-0 sm:px-5 grid grid-cols-2/1fr-auto sm:grid-cols-3/auto-1fr-0.5fr items-center">
         <div className="items-center gap-1.5 hidden sm:w-16 sm:flex md:w-56">
           <icon.BiCloudSnow className="text-3xl" />
           <h3 className="text-xl hidden md:block">CloudSync</h3>
