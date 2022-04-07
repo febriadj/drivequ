@@ -1,35 +1,37 @@
 import React from 'react';
 import axios from 'axios';
+import * as helper from '../../helpers';
 
 function ModalClear({
   handleGetTrashedDocs,
   setModal,
   documents,
+  folders,
+  setTrashSize,
 }) {
   const token = localStorage.getItem('token');
 
   const handleClearTrash = async () => {
     try {
-      let arr = [];
-      arr = documents.map((item) => item._id);
+      const merge = [...folders.map(({ _id }) => _id), ...documents.map(({ _id }) => _id)];
 
-      const { data } = await axios({
-        url: '/trash',
+      await axios({
         method: 'delete',
-        data: arr,
+        url: '/trash',
+        data: merge,
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!data.success) throw data;
       handleGetTrashedDocs();
+      setTrashSize(await helper.totalSize({ trashed: true }));
 
       setTimeout(() => {
         setModal((prev) => ({
           ...prev, clear: false,
         }));
-      }, 1000);
+      }, 800);
     }
     catch (error0) {
       console.error(error0.message);
