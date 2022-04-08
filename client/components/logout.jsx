@@ -34,7 +34,7 @@ function Logout() {
                 localStorage.removeItem('token');
                 dispatch(logout());
                 navigate('/');
-              }, 800);
+              }, 500);
             }}
           >
             Sign Out
