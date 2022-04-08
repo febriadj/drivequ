@@ -70,14 +70,14 @@ function Table({
   }, []);
 
   return (
-    <div className="absolute w-full flex">
+    <div className="absolute w-full flex pb-5">
       <table className="w-full border-collapse md:mr-5">
         <thead>
           <tr className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300">
-            <td>Name</td>
-            <td className="hidden md:block">Mimetype</td>
-            <td className="hidden md:block">Published</td>
-            <td className="hidden sm:block">Size</td>
+            <td className="font-semibold">Name</td>
+            <td className="hidden md:block font-semibold">Mimetype</td>
+            <td className="hidden md:block font-semibold">Published</td>
+            <td className="hidden sm:block font-semibold">Size</td>
           </tr>
         </thead>
         <tbody>
@@ -140,6 +140,21 @@ function Table({
               </tr>
             ))
           }
+          <tr className="flex items-center gap-1.5 mt-2.5 px-2.5 sm:px-1.5">
+            <td className="bg-gray-100 px-2.5 rounded-md cursor-default hover:bg-gray-200">{`Folder: ${folders.length}`}</td>
+            <td className="bg-gray-100 px-2.5 rounded-md cursor-default hover:bg-gray-200">{`File: ${documents.length}`}</td>
+            <td
+              className="font-semibold"
+            >
+              {
+                helper.bytesToSize(
+                  documents.length > 0 ? (
+                    documents.map(({ size }) => size).reduce((acc, curr) => acc + curr)
+                  ) : 0,
+                )
+              }
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
