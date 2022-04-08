@@ -186,7 +186,7 @@ function DocInFolder() {
               />
             )
           }
-          <div className="flex items-center pb-2 translate-y-1 scrollbar scrollbar-thumb-gray-200 scrollbar-thin" id="path">
+          <div className="flex items-center pb-2 translate-y-1 scrollbar-thumb-gray-200 scrollbar-thin" id="path">
             {
               currentFolder && currentFolder.path.map((item, index) => (
                 <button
