@@ -15,7 +15,6 @@ exports.insert = async (req, res) => {
 
       const {
         location = '/',
-        permission = 'public',
         path = ['/'],
         parents = [],
       } = fields;
@@ -27,13 +26,6 @@ exports.insert = async (req, res) => {
         size,
         mimetype,
       } = files.file;
-
-      if (permission !== 'public' && permission !== 'private') {
-        const newError = {
-          message: 'Permission must be "private" or "public"',
-        };
-        throw newError;
-      }
 
       const format = originalFilename.split('.').reverse()[0];
       const filename = `${newFilename}.${format}`;
@@ -49,11 +41,10 @@ exports.insert = async (req, res) => {
             format,
             location,
             url: `/${filename}`,
-            parents: parents.length > 0 ? parents.split(',') : [],
-            path: path.length > 1 ? path.split(',') : ['/'],
             mimetype,
             size,
-            permission,
+            path: path.length > 1 ? path.split(',') : ['/'],
+            parents: parents.length > 0 ? parents.split(',') : [],
           }).save();
 
           response({
@@ -106,6 +97,27 @@ exports.find = async (req, res) => {
             { userId: { $eq: req.user.id } },
             { location: { $eq: q.location } },
             { trashed: { $eq: q.trashed ?? false } },
+          ],
+        }).sort({ createdAt: -1 });
+      }
+      else if (q.filename) {
+        const regexQuery = (
+          args = '',
+        ) => ({
+          $regex: new RegExp(req.query.filename),
+          $options: args,
+        });
+
+        documents = await DocModel.find({
+          $and: [
+            { userId: { $eq: req.user.id } },
+            { trashed: { $eq: q.trashed ?? false } },
+            {
+              $or: [
+                { filename: regexQuery('') },
+                { originalFilename: regexQuery('i') },
+              ],
+            },
           ],
         }).sort({ createdAt: -1 });
       }
@@ -197,27 +209,20 @@ exports.size = async (req, res) => {
   try {
     const documents = await DocModel.find({
       $and: [
-        { userId: { $eq: req.user.id } },
+        { userId: req.user.id },
         { trashed: { $eq: req.query.trashed } },
       ],
     });
 
-    const size = documents.map((args) => args.size).reduce((acc, curr) => acc + curr);
+    const result = documents.map((args) => args.size).reduce((acc, curr) => acc + curr);
 
     response({
       res,
       message: 'Request successful',
-      payload: size,
+      payload: result,
     });
   }
   catch (error0) {
-    const { statusCode, message } = error0;
-
-    response({
-      res,
-      success: false,
-      message,
-      httpStatusCode: statusCode || 400,
-    });
+    response({ res, payload: 0 });
   }
 };
