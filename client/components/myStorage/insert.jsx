@@ -1,6 +1,9 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
+import { totalSize } from '../../redux/features/document';
+import * as helper from '../../helpers';
 
 function Insert({
   setModal,
@@ -10,6 +13,7 @@ function Insert({
   position,
 }) {
   const token = localStorage.getItem('token');
+  const dispatch = useDispatch();
 
   const handleUploadFile = async (event) => {
     try {
@@ -33,6 +37,7 @@ function Insert({
       if (!request.data.success) throw request.data;
 
       handleGetDocs();
+      dispatch(totalSize(await helper.totalSize({ trashed: false })));
 
       setTimeout(() => {
         setModal((prev) => ({
