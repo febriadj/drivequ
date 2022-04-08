@@ -6,12 +6,18 @@ exports.insert = async (req, res) => {
   try {
     const {
       name,
-      privated = false,
       description = '',
       location = ['/'],
       path = [],
       parents = [],
     } = req.body;
+
+    if (name.length > 30) {
+      const newError = {
+        message: 'Can\'t be longer than 30 characters',
+      };
+      throw newError;
+    }
 
     const folderNameExists = await FolderModel.findOne({
       $and: [
@@ -32,7 +38,6 @@ exports.insert = async (req, res) => {
       userId: req.user.id,
       name,
       url: `/${uuidv4()}`,
-      privated,
       location,
       description,
       path,
@@ -47,11 +52,12 @@ exports.insert = async (req, res) => {
   }
   catch (error0) {
     const { statusCode, message } = error0;
+
     response({
       res,
-      httpStatusCode: statusCode || 400,
       success: false,
       message,
+      httpStatusCode: statusCode || 400,
     });
   }
 };
@@ -122,11 +128,13 @@ exports.find = async (req, res) => {
     });
   }
   catch (error0) {
+    const { statusCode, message } = error0;
+
     response({
       res,
-      message: error0.message,
       success: false,
-      httpStatusCode: 400,
+      message,
+      httpStatusCode: statusCode || 400,
     });
   }
 };
