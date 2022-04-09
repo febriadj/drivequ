@@ -17,16 +17,14 @@ function NewFolder({
   const [form, setForm] = useState({
     name: '',
     description: '',
-    privated: false,
   });
 
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
 
-      const { data } = await axios.post('/folders', {
+      await axios.post('/folders', {
         name: form.name,
-        privated: form.privated,
         description: form.description,
         location: detail ? [...detail.location, location] : ['/'],
         path: detail ? [...detail.path, form.name] : ['/', form.name],
@@ -37,12 +35,13 @@ function NewFolder({
         },
       });
 
-      if (!data.success) throw data;
       handleGetFolders();
+      setForm((prev) => ({
+        ...prev, name: '', description: '',
+      }));
+
       setResponse((prev) => ({
-        ...prev,
-        success: true,
-        message: data.message,
+        ...prev, success: true, message: '',
       }));
 
       setTimeout(() => {
@@ -50,7 +49,7 @@ function NewFolder({
           ...prev,
           newFolder: false,
         }));
-      }, 800);
+      }, 500);
     }
     catch (error0) {
       setResponse((prev) => ({
@@ -76,31 +75,15 @@ function NewFolder({
           <h2 className="text-xl font-semibold">New Folder</h2>
         </div>
         <form method="post" className="grid mt-2.5" onSubmit={handleSubmit}>
-          <span className="grid grid-cols-2/1fr-auto items-end gap-2.5 border-0 border-b border-solid border-gray-300">
-            <input
-              type="text"
-              name="name"
-              id="name"
-              className="w-full py-2.5"
-              required
-              placeholder="Folder name"
-              onChange={handleChange}
-            />
-            <button
-              type="button"
-              name="privated"
-              className="flex items-center gap-2.5 bg-gray-100 py-1.5 px-2.5 rounded-lg my-1.5 hover:bg-gray-200"
-              onClick={() => {
-                setForm((prev) => ({
-                  ...prev,
-                  privated: !prev.privated,
-                }));
-              }}
-            >
-              { form.privated ? <icon.BiLock /> : <icon.BiGlobe /> }
-              <p>{form.privated ? 'Private' : 'Public'}</p>
-            </button>
-          </span>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            className="w-full py-2.5 border-0 border-b border-solid border-gray-300"
+            required
+            placeholder="Folder name"
+            onChange={handleChange}
+          />
           <p className={`text-sm mt-1 ${response.success ? 'text-black' : 'text-red-900'}`}>{response.message}</p>
           <textarea
             name="description"
