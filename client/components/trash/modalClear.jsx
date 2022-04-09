@@ -31,7 +31,7 @@ function ModalClear({
         setModal((prev) => ({
           ...prev, clear: false,
         }));
-      }, 800);
+      }, 500);
     }
     catch (error0) {
       console.error(error0.message);
