@@ -50,28 +50,22 @@ function Table({
     }
   };
 
-  const [init, setInit] = useState(true);
-
   useEffect(() => {
-    if (init) {
-      window.addEventListener('keydown', (event) => {
-        if (event.key === 'Control') {
-          setDoubleKeys((prev) => ({
-            ...prev,
-            multipleSelect: true,
-          }));
-        }
-      });
-
-      window.addEventListener('keyup', () => {
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Control') {
         setDoubleKeys((prev) => ({
           ...prev,
-          multipleSelect: false,
+          multipleSelect: true,
         }));
-      });
+      }
+    });
 
-      setInit(false);
-    }
+    window.addEventListener('keyup', () => {
+      setDoubleKeys((prev) => ({
+        ...prev,
+        multipleSelect: false,
+      }));
+    });
   }, []);
 
   return (
