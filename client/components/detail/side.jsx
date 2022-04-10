@@ -124,11 +124,7 @@ function Side({
         {
           doc && (
             <div className="py-5">
-              <div className="flex justify-between mb-5">
-                <span className="flex gap-2.5 items-center bg-gray-100 border-solid border border-gray-400 rounded-md py-1.5 px-2.5 hover:bg-gray-200 cursor-default">
-                  { doc.privated ? <icon.BiLock className="text-xl" /> : <icon.BiGlobe className="text-xl" /> }
-                  <p>{doc.privated ? 'Private' : 'Public'}</p>
-                </span>
+              <div className="flex justify-end mb-5">
                 <button
                   type="button"
                   className="bg-blue-500 text-white flex items-center rounded-md overflow-hidden group hover:bg-blue-600"
@@ -141,7 +137,7 @@ function Side({
                   }}
                 >
                   <p className="px-2.5">Download</p>
-                  <span className="bg-blue-600 p-1 group-hover:bg-blue-700">
+                  <span className="bg-blue-600 px-1 py-1.5 group-hover:bg-blue-700">
                     <icon.BiDownArrowAlt className="text-2xl" />
                   </span>
                 </button>
@@ -158,7 +154,7 @@ function Side({
                   <p>Published</p>
                   <p>Updated</p>
                 </div>
-                <div className="grid overflow-x-auto gap-1 pr-2.5 pb-5 scrollbar scrollbar-thin scrollbar-thumb-gray-200">
+                <div className="grid overflow-x-auto gap-1 pr-2.5 pb-5 scrollbar-thin scrollbar-thumb-gray-200">
                   <p className="whitespace-nowrap">{doc.type === 'file' ? `${doc.filename}.${doc.format}` : doc.name}</p>
                   <p className="whitespace-nowrap">{doc.type === 'file' ? doc.originalFilename : '-'}</p>
                   <p className="whitespace-nowrap">{doc.url}</p>
