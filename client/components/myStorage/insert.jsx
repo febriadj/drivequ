@@ -24,7 +24,7 @@ function Insert({
       fd.append('parents', currentFolder ? [...currentFolder.parents, currentFolder._id] : []);
       fd.append('path', currentFolder ? [...currentFolder.path] : ['/']);
 
-      const request = await axios({
+      await axios({
         method: 'post',
         url: 'http://localhost:5050/api/in/documents',
         data: fd,
@@ -34,8 +34,6 @@ function Insert({
         },
       });
 
-      if (!request.data.success) throw request.data;
-
       handleGetDocs();
       dispatch(totalSize(await helper.totalSize({ trashed: false })));
 
@@ -44,7 +42,7 @@ function Insert({
           ...prev,
           insert: false,
         }));
-      }, 800);
+      }, 500);
     }
     catch (error0) {
       console.error(error0.message);
