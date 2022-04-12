@@ -31,7 +31,7 @@ function Sidebar({ page }) {
             </Link>
           </div>
           <div className="md:w-full flex sm:flex-col sm:border-0 sm:border-t sm:border-solid border-gray-300 sm:mt-5 sm:pt-5 md:items-start">
-            <div className="grid px-5 mb-2.5">
+            <div className="hidden md:grid md:px-5 md:mb-2.5 ">
               <p>Total Storage Used:</p>
               <p className="font-semibold">{helper.bytesToSize(size)}</p>
             </div>
