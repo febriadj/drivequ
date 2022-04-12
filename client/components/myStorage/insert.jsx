@@ -51,9 +51,9 @@ function Insert({
 
   return (
     <div
-      className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 z-10 translate-y-14"
+      className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 z-10 translate-y-12"
       style={{
-        transform: `translate(${position}px, 56px)`,
+        transform: `translate(${position}px, 54px)`,
       }}
     >
       <div className="container py-3.5 grid">
