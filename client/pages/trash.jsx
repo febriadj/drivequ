@@ -19,6 +19,7 @@ function Trash() {
   const [folders, setFolders] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [trashSize, setTrashSize] = useState(0);
+  const [detail640IsOpen, setDetail640IsOpen] = useState(false);
 
   const [selected, setSelected] = useState({
     types: [],
@@ -97,6 +98,15 @@ function Trash() {
 
   return (
     <div className="absolute w-full h-full flex flex-col">
+      {
+        window.screen.width < 640 && detail640IsOpen && (
+          <detail.detail640
+            selected={selected}
+            setDetail640IsOpen={setDetail640IsOpen}
+            trashedRequest
+          />
+        )
+      }
       { logoutIsOpen && <comp0.logout /> }
       <comp0.navbar />
       <comp0.sidebar
@@ -114,7 +124,7 @@ function Trash() {
         )
       }
       <div className="pt-16 h-full grid grid-rows-2/auto-1fr sm:ml-16 md:ml-56 sm:pl-5">
-        <div className="relative w-full bg-white pl-2.5 sm:pl-0 pr-2.5 sm:pr-5 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
+        <div className="relative w-full bg-white pl-3.5 sm:pl-0 pr-2.5 sm:pr-5 h-14 grid grid-cols-2/1fr-auto items-center border-0 border-b border-solid border-gray-300">
           <div className="flex items-center" id="path">
             <h2 className="text-xl">Trash Bin</h2>
           </div>
@@ -143,7 +153,13 @@ function Trash() {
               type="button"
               className={`p-2 hover:bg-gray-100 rounded-[50%] ${detailSideIsOpen && 'bg-gray-100'}`}
               onClick={() => {
-                setDetailSideIsOpen((prev) => !prev);
+                if (window.screen.width < 640) {
+                  if (selected.payload.length > 0) {
+                    setDetail640IsOpen((prev) => !prev);
+                  }
+                } else {
+                  setDetailSideIsOpen((prev) => !prev);
+                }
               }}
             >
               <icon.BiInfoCircle className="text-2xl" />
@@ -153,8 +169,8 @@ function Trash() {
         <div className="w-full grid grid-cols-2/1fr-auto">
           <div className="relative overflow-y-scroll">
             <div className="absolute w-full flex items-center h-14">
-              <span className="w-full h-full flex justify-between items-center bg-gray-100 mt-5 mx-2.5 sm:ml-0 md:mr-5 px-5 rounded-lg">
-                <p>Items in trash will be deleted forever after 7 days</p>
+              <span className="w-full h-full overflow-x-hidden flex justify-between items-center gap-3.5 bg-gray-100 mt-5 mx-3.5 sm:ml-0 md:mr-5 px-5 rounded-lg">
+                <p className="truncate">Items in trash will be deleted forever after 7 days</p>
                 <button
                   type="button"
                   className="bg-gray-200 hover:bg-gray-300 py-1.5 px-3.5 rounded-md overflow-hidden"
