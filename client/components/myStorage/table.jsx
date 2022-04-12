@@ -140,7 +140,7 @@ function Table({
               </tr>
             ))
           }
-          <tr className="flex items-center gap-1.5 mt-2.5 px-2.5 sm:px-1.5">
+          <tr className="flex items-center gap-1.5 mt-2.5 px-3.5 sm:px-1">
             <td className="bg-gray-100 px-2.5 rounded-md cursor-default hover:bg-gray-200">{`Folder: ${folders.length}`}</td>
             <td className="bg-gray-100 px-2.5 rounded-md cursor-default hover:bg-gray-200">{`File: ${documents.length}`}</td>
             <td
