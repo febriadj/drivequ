@@ -65,7 +65,7 @@ function Detail640({
         aria-hidden="true"
       >
       </span>
-      <div className="grid grid-cols-2/auto-1fr bg-white gap-5 mx-5 p-5 pb-0 z-10 rounded-lg">
+      <div className="w-full grid grid-cols-2/auto-1fr bg-white gap-5 mx-5 p-5 pb-0 z-10 rounded-lg">
         <div className="grid gap-1.5 opacity-50 pb-5">
           <p>Name</p>
           <p>Original</p>
