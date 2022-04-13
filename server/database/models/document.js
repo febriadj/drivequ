@@ -11,7 +11,7 @@ const DocModel = model('documents', new Schema({
     required: true,
     unique: true,
   },
-  originalFilename: {
+  originalname: {
     type: Schema.Types.String,
     trim: true,
     required: true,
