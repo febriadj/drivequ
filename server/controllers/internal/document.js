@@ -1,76 +1,60 @@
 const nodePath = require('path');
-const { IncomingForm } = require('formidable');
 const mv = require('mv');
 const DocModel = require('../../database/models/document');
+
 const response = require('../../helpers/response');
 
-exports.insert = async (req, res) => {
-  const form = new IncomingForm({
-    multiples: true,
-  });
+exports.insert = (req, res) => {
+  const {
+    location = '/',
+    path = ['/'],
+    parents = [],
+  } = req.body;
 
-  form.parse(req, async (error1, fields, files) => {
-    try {
-      if (error1) throw error1;
+  for (let i = 0; i < req.files.length; i += 1) {
+    const {
+      originalname,
+      filename,
+      size,
+      destination,
+      path: filepath,
+      mimetype,
+    } = req.files[i];
 
-      const {
-        location = '/',
-        path = ['/'],
-        parents = [],
-      } = fields;
+    const splitName = originalname.split('.');
+    const format = splitName.length > 1 ? splitName.reverse()[0] : 'txt';
 
-      const {
-        newFilename,
-        originalFilename,
-        filepath,
-        size,
-        mimetype,
-      } = files.file;
+    mv(filepath, `${destination}/${req.user.id}/${filename}.${format}`, { mkdirp: true }, async (error2) => {
+      try {
+        if (error2) throw error2;
 
-      const format = originalFilename.split('.').reverse()[0];
-      const filename = `${newFilename}.${format}`;
+        await new DocModel({
+          userId: req.user.id,
+          filename,
+          originalname,
+          format,
+          location,
+          url: `/${filename}.${format}`,
+          mimetype,
+          size,
+          path: path.length > 1 ? path.split(',') : ['/'],
+          parents: parents.length > 0 ? parents.split(',') : [],
+        }).save();
+      }
+      catch (error3) {
+        response({
+          res,
+          message: error3.message,
+          success: false,
+          httpStatusCode: 400,
+        });
+      }
+    });
+  }
 
-      mv(filepath, `uploads/${req.user.id}/${filename}`, { mkdirp: true }, async (error2) => {
-        try {
-          if (error2) throw error2;
-
-          const document = await new DocModel({
-            userId: req.user.id,
-            filename: newFilename,
-            originalFilename,
-            format,
-            location,
-            url: `/${filename}`,
-            mimetype,
-            size,
-            path: path.length > 1 ? path.split(',') : ['/'],
-            parents: parents.length > 0 ? parents.split(',') : [],
-          }).save();
-
-          response({
-            res,
-            message: 'Document added successfully',
-            payload: document,
-          });
-        }
-        catch (error3) {
-          response({
-            res,
-            message: error3.message,
-            success: false,
-            httpStatusCode: 400,
-          });
-        }
-      });
-    }
-    catch (error0) {
-      response({
-        res,
-        message: error0.message,
-        success: false,
-        httpStatusCode: 400,
-      });
-    }
+  response({
+    res,
+    message: 'Document added successfully',
   });
 };
 
@@ -115,7 +99,7 @@ exports.find = async (req, res) => {
             {
               $or: [
                 { filename: regexQuery('') },
-                { originalFilename: regexQuery('i') },
+                { originalname: regexQuery('i') },
               ],
             },
           ],
