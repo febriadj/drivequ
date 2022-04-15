@@ -14,7 +14,7 @@ function Trash() {
   const token = localStorage.getItem('token');
   const dispatch = useDispatch();
 
-  const { modal: { logoutIsOpen } } = useSelector((state) => state);
+  const store = useSelector((state) => state);
 
   const [folders, setFolders] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -107,7 +107,9 @@ function Trash() {
           />
         )
       }
-      { logoutIsOpen && <comp0.logout /> }
+      { store.logoutIsOpen && <comp0.logout /> }
+      { store.modal.exportIsOpen && <comp0.exportModal /> }
+
       <comp0.navbar />
       <comp0.sidebar
         page="/trash"
