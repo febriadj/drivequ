@@ -67,6 +67,7 @@ function Detail640({
       </span>
       <div className="w-full grid grid-cols-2/auto-1fr bg-white gap-5 mx-5 p-5 pb-0 z-10 rounded-lg">
         <div className="grid gap-1.5 opacity-50 pb-5">
+          <p>ID</p>
           <p>Name</p>
           <p>Original</p>
           <p>URL</p>
@@ -78,9 +79,10 @@ function Detail640({
         </div>
         {
           doc && (
-            <div className="grid overflow-x-auto gap-1.5 pr-2.5 pb-5">
+            <div className="grid overflow-x-auto gap-1 pr-2.5 pb-5">
+              <p className="whitespace-nowrap">{doc._id}</p>
               <p className="whitespace-nowrap">{doc.type === 'file' ? `${doc.filename}.${doc.format}` : doc.name}</p>
-              <p className="whitespace-nowrap">{doc.type === 'file' ? doc.originalFilename : '-'}</p>
+              <p className="whitespace-nowrap">{doc.type === 'file' ? doc.originalname : '-'}</p>
               <p className="whitespace-nowrap">{doc.url}</p>
               <span className="whitespace-nowrap flex items-center">
                 { doc.type === 'file' && doc.path.length > 1 && doc.path.slice(1, doc.path.length).map((item) => <p key={item}>{`/${item}`}</p>) }
