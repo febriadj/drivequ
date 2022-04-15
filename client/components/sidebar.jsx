@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
 import * as icon from 'react-icons/bi';
+
 import * as helper from '../helpers';
-import { zipDownloadModal } from '../redux/features/modal';
+import { exportModal } from '../redux/features/modal';
 
 function Sidebar({ page }) {
   const dispatch = useDispatch();
@@ -38,12 +38,8 @@ function Sidebar({ page }) {
             <button
               type="button"
               className="flex items-center justify-center gap-5 py-2.5 px-2.5 rounded-[50%] md:justify-start md:rounded-none md:rounded-r-3xl md:px-5 md:w-full hover:bg-gray-100"
-              onClick={async () => {
-                dispatch(zipDownloadModal());
-                const zip = await helper.zipDownload();
-                if (zip) {
-                  setTimeout(() => dispatch(zipDownloadModal()), 800);
-                }
+              onClick={() => {
+                dispatch(exportModal());
               }}
             >
               <icon.BiCloudDownload className="text-2xl" />
