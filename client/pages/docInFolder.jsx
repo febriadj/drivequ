@@ -15,10 +15,8 @@ import * as detail from '../components/detail';
 function DocInFolder() {
   const token = localStorage.getItem('token');
   const dispatch = useDispatch();
-  const {
-    auth: { user },
-    modal: { logoutIsOpen, zipDownloadIsOpen },
-  } = useSelector((state) => state);
+
+  const store = useSelector((state) => state);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -157,8 +155,10 @@ function DocInFolder() {
           />
         )
       }
-      { logoutIsOpen && <comp0.logout /> }
-      { zipDownloadIsOpen && <comp0.zipDownload /> }
+      { store.modal.logoutIsOpen && <comp0.logout /> }
+      { store.modal.zipDownloadIsOpen && <comp0.zipDownload /> }
+      { store.modal.exportIsOpen && <comp0.exportModal /> }
+
       <comp0.navbar />
       <comp0.sidebar
         page="/"
@@ -245,7 +245,7 @@ function DocInFolder() {
                       </Link>
                     ) : (
                       <a
-                        href={`${axios.defaults.baseURL}/documents/${user._id}/file${selected.payload[selected.payload.length - 1].url}`}
+                        href={`${axios.defaults.baseURL}/documents/${store.auth.user._id}/file${selected.payload[selected.payload.length - 1].url}`}
                         type="button"
                         className="p-2 hover:bg-gray-100 rounded-[50%]"
                       >
