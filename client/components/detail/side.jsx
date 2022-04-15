@@ -100,9 +100,6 @@ function Side({
                   alt=""
                   className="w-full"
                 />
-                <span className="absolute bottom-0 right-0 w-8 h-8 -translate-x-2.5 -translate-y-2.5 rounded-[50%] bg-gray-200 flex justify-center items-center">
-                  <icon.BiQuestionMark className="text-xl" />
-                </span>
               </div>
             )
           }
@@ -145,6 +142,7 @@ function Side({
               <h1 className="text-xl font-semibold">System Property</h1>
               <div className="grid grid-cols-2/auto-1fr gap-5 pt-2.5">
                 <div className="grid gap-1 opacity-50 pb-5">
+                  <p>ID</p>
                   <p>Name</p>
                   <p>Original</p>
                   <p>URL</p>
@@ -155,8 +153,9 @@ function Side({
                   <p>Updated</p>
                 </div>
                 <div className="grid overflow-x-auto gap-1 pr-2.5 pb-5 scrollbar-thin scrollbar-thumb-gray-200">
+                  <p className="whitespace-nowrap">{doc._id}</p>
                   <p className="whitespace-nowrap">{doc.type === 'file' ? `${doc.filename}.${doc.format}` : doc.name}</p>
-                  <p className="whitespace-nowrap">{doc.type === 'file' ? doc.originalFilename : '-'}</p>
+                  <p className="whitespace-nowrap">{doc.type === 'file' ? doc.originalname : '-'}</p>
                   <p className="whitespace-nowrap">{doc.url}</p>
                   <span className="whitespace-nowrap flex items-center">
                     {doc.type === 'file' && doc.path.length > 1 && doc.path.slice(1, doc.path.length).map((item) => <p key={item}>{`/${item}`}</p>)}
