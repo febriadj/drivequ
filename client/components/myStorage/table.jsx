@@ -110,6 +110,13 @@ function Table({
               <tr
                 key={item._id}
                 className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300 cursor-default"
+                onDoubleClick={() => {
+                  const a = document.createElement('a');
+                  a.href = `${axios.defaults.baseURL}/documents/${item.userId}/file${item.url}`;
+
+                  a.click();
+                  a.remove();
+                }}
                 onClick={(event) => {
                   handleOnSelection(event, {
                     id: item._id,
