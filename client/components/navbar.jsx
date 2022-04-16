@@ -71,6 +71,7 @@ function Navbar() {
                 <SearchTab
                   setForm={setForm}
                   form={form}
+                  setSearchTabIsOpen={setSearchTabIsOpen}
                 />
               )
             }
