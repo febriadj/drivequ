@@ -19,7 +19,9 @@ function Insert({
     try {
       const fd = new FormData();
 
-      fd.append('file', event.target.files[0]);
+      for (let i = 0; i < event.target.files.length; i += 1) {
+        fd.append('file', event.target.files[i]);
+      }
       fd.append('location', location);
       fd.append('parents', currentFolder ? [...currentFolder.parents, currentFolder._id] : []);
       fd.append('path', currentFolder ? [...currentFolder.path] : ['/']);
@@ -83,6 +85,7 @@ function Insert({
               type="file"
               name="file"
               id="file"
+              multiple
               onChange={handleUploadFile}
               className="hidden"
             />
