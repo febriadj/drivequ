@@ -1,56 +1,62 @@
-const path = require('path');
+const nodePath = require('path');
 const fs = require('fs');
 const mv = require('mv');
 const DocModel = require('../../database/models/document');
+const FolderModel = require('../../database/models/folder');
+
 const response = require('../../helpers/response');
+const randomStr = require('../../helpers/randomStr');
 
 exports.insert = async (req, res) => {
-  try {
-    const {
-      location = '/',
-      permission = 'public',
-      parents = [],
-      file: {
-        newFilename,
-        originalFilename,
-        filepath,
-        size,
-        mimetype,
-      },
-    } = req.body;
+  const qExists = Object.keys(req.query).length > 0;
 
-    if (permission !== 'public' && permission !== 'private') {
-      const newError = {
-        message: 'Permission must be "private" or "public"',
-      };
-      throw newError;
-    }
+  const { location = '/' } = req.body;
 
-    const format = originalFilename.split('.').reverse()[0];
-    const filename = `${newFilename}.${format}`;
+  let currFolder;
+  if (location !== '/') {
+    currFolder = await FolderModel.findOne({
+      $and: [
+        { userId: req.user.id },
+        { url: location },
+      ],
+    });
+  }
 
-    mv(filepath, `uploads/${filename}`, { mkdirp: true }, async (error1) => {
+  function handleAction(
+    {
+      originalname = null,
+      originalFilename = null,
+      size,
+      mimetype,
+      path: filepath1 = null,
+      filepath: filepath2 = null,
+    },
+    callback,
+  ) {
+    const splitName = originalname ? originalname.split('.') : originalFilename.split('.');
+    const format = splitName.length > 1 ? splitName.reverse()[0] : 'txt';
+
+    const filename = randomStr(16);
+    const destination = nodePath.resolve(__dirname, '../../../uploads');
+
+    mv(filepath1 || filepath2, `${destination}/${req.user.id}/${filename}.${format}`, { mkdirp: true }, async (error1) => {
       try {
         if (error1) throw error1;
 
         const document = await new DocModel({
-          userId: req.user._id,
-          filename: newFilename,
-          originalFilename,
+          userId: req.user.id,
+          filename,
+          originalname: originalname || originalFilename,
           format,
           location,
-          url: `/${filename}`,
-          parents: parents.length > 0 ? parents.split(',') : [],
+          url: `/api/documents/${req.user.id}/file/${filename}.${format}`,
           mimetype,
           size,
-          permission,
+          path: location === '/' ? ['/'] : [...currFolder.path, currFolder.name],
+          parents: location === '/' ? [] : [...currFolder.parents, currFolder._id.toString()],
         }).save();
 
-        response({
-          res,
-          message: 'Document added successfully',
-          payload: document,
-        });
+        callback(document);
       }
       catch (error2) {
         response({
@@ -62,13 +68,29 @@ exports.insert = async (req, res) => {
       }
     });
   }
-  catch (error0) {
-    response({
-      res,
-      httpStatusCode: error0.statusCode || 400,
-      success: false,
-      message: error0.message,
+
+  if (!qExists || Number(req.query.multiples) === 0) {
+    handleAction(req.body.file, (args) => {
+      response({
+        res,
+        message: 'Successfully uploaded file',
+        payload: args,
+      });
     });
+  } else {
+    const { length } = req.body.files;
+
+    for (let i = 0; i < length; i += 1) {
+      handleAction(req.body.files[i], (args) => {
+        if (i >= length - 1) {
+          response({
+            res,
+            message: 'Successfully uploaded files',
+            payload: args,
+          });
+        }
+      });
+    }
   }
 };
 
@@ -83,57 +105,58 @@ exports.find = async (req, res) => {
       if (q.id) {
         documents = await DocModel.findOne({
           $and: [
-            { userId: { $eq: req.user._id } },
-            { _id: { $eq: q.id } },
-            { trashed: { $eq: !!q.trashed } },
+            { userId: req.user.id },
+            { _id: q.id },
+            { trashed: { $eq: q.trashed ?? false } },
           ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
       else if (q.location) {
         documents = await DocModel.find({
           $and: [
-            { userId: { $eq: req.user._id } },
-            { location: { $eq: q.location } },
-            { trashed: { $eq: !!q.trashed } },
+            { userId: req.user.id },
+            { location: q.location },
+            { trashed: { $eq: q.trashed ?? false } },
           ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
-      else if (q.url) {
-        documents = await DocModel.findOne({
+      else if (q.filename) {
+        const regexQuery = (args) => ({
+          $regex: new RegExp(req.query.filename),
+          $options: args,
+        });
+
+        documents = await DocModel.find({
           $and: [
-            { userId: { $eq: req.user._id } },
-            { url: { $eq: q.url } },
-            { trashed: { $eq: !!q.trashed } },
+            { userId: req.user.id },
+            { trashed: { $eq: q.trashed ?? false } },
+            {
+              $or: [
+                { filename: regexQuery('') },
+                { originalFilename: regexQuery('i') },
+              ],
+            },
           ],
-        }).sort({ filename: 1 });
-      }
-      else if (q.permission) {
-        documents = await DocModel.findOne({
-          $and: [
-            { userId: { $eq: req.user._id } },
-            { permission: { $eq: q.permission } },
-            { trashed: { $eq: !!q.trashed } },
-          ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
       else {
         documents = await DocModel.find({
           $and: [
-            { userId: { $eq: req.user._id } },
-            { trashed: { $eq: !!q.trashed } },
+            { userId: req.user.id },
+            { trashed: { $eq: q.trashed ?? false } },
           ],
-        }).sort({ filename: 1 });
+        }).sort({ createdAt: -1 });
       }
     }
     else {
       documents = await DocModel.find({
-        userId: { $eq: req.user._id },
-      }).sort({ filename: 1 });
+        userId: req.user.id,
+      }).sort({ createdAt: -1 });
     }
 
     response({
       res,
-      message: 'Request successful',
+      message: 'Request received by server',
       payload: documents,
     });
   }
@@ -149,37 +172,8 @@ exports.find = async (req, res) => {
 
 exports.open = async (req, res) => {
   try {
-    const file = await path.resolve(__dirname, `../../../uploads/${req.params.filename}`);
+    const file = await nodePath.resolve(__dirname, `../../../uploads/${req.params.id}/${req.params.filename}`);
     res.sendFile(file);
-  }
-  catch (error0) {
-    response({
-      res,
-      httpStatusCode: error0.statusCode || 400,
-      success: false,
-      message: error0.message,
-    });
-  }
-};
-
-exports.trashing = async (req, res) => {
-  try {
-    const updated = await DocModel.updateMany(
-      {
-        $and: [
-          { userId: { $eq: req.user._id } },
-          { _id: { $in: req.body } },
-        ],
-      },
-      { $set: { trashed: true } },
-      { multi: true },
-    );
-
-    response({
-      res,
-      message: 'document successfully moved to trash',
-      payload: updated,
-    });
   }
   catch (error0) {
     response({
@@ -195,15 +189,15 @@ exports.delete = async (req, res) => {
   try {
     const query = {
       $and: [
-        { userId: { $eq: req.user._id } },
+        { userId: { $eq: req.user.id } },
         { _id: { $in: req.body } },
       ],
     };
 
     const docs = await DocModel.find(query);
-    await DocModel.deleteMany(query);
 
-    const root = path.resolve(__dirname, '../../../uploads');
+    await DocModel.deleteMany(query);
+    const root = nodePath.resolve(__dirname, `../../../uploads/${req.user.id}`);
 
     let i = 0;
     while (i < docs.length) {
@@ -214,8 +208,10 @@ exports.delete = async (req, res) => {
 
     response({
       res,
-      message: 'document deleted successfully',
-      payload: docs,
+      message: 'Successfully delete file',
+      payload: {
+        files: docs.length,
+      },
     });
   }
   catch (error0) {
