@@ -8,15 +8,15 @@ module.exports = async (req, res, next) => {
     if (!header) {
       const newError = {
         code: 417,
-        message: 'server requires token in header',
+        message: 'Server requires token in header',
       };
       throw newError;
     }
 
     const key = header.split(' ')[1];
-    const user = await UserModel.findOne({ accessKeyId: { $eq: key } });
+    const user = await UserModel.findOne({ accessKeyId: key });
 
-    req.user = user;
+    req.user = { id: user._id };
     next();
   }
   catch (error0) {
