@@ -79,7 +79,7 @@ exports.create = async (req, res) => {
         response({
           res,
           payload: {
-            url: `/documents/${req.user.id}/file/${req.user.id}.zip`,
+            url: `/api/documents/${req.user.id}/file/${req.user.id}.zip`,
             filename: `${req.user.id}.zip`,
           },
         });

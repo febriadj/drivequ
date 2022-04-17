@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../../database/models/user');
+const randomStr = require('../../helpers/randomStr');
 const response = require('../../helpers/response');
 
 exports.register = async (req, res) => {
@@ -39,11 +40,13 @@ exports.register = async (req, res) => {
     });
   }
   catch (error0) {
+    const { statusCode, message } = error0;
+
     response({
       res,
-      httpStatusCode: error0.statusCode || 400,
       success: false,
-      message: error0.message,
+      message,
+      httpStatusCode: statusCode || 400,
     });
   }
 };
@@ -80,11 +83,13 @@ exports.login = async (req, res) => {
     });
   }
   catch (error0) {
+    const { statusCode, message } = error0;
+
     response({
       res,
-      httpStatusCode: error0.statusCode || 400,
       success: false,
-      message: error0.message,
+      message,
+      httpStatusCode: statusCode || 400,
     });
   }
 };
@@ -92,6 +97,7 @@ exports.login = async (req, res) => {
 exports.find = async (req, res) => {
   try {
     const user = await UserModel.findOne({ _id: { $eq: req.user.id } });
+
     response({
       res,
       message: 'Request successful',
@@ -99,11 +105,40 @@ exports.find = async (req, res) => {
     });
   }
   catch (error0) {
+    const { statusCode, message } = error0;
+
     response({
       res,
-      httpStatusCode: error0.statusCode || 400,
       success: false,
-      message: error0.message,
+      message,
+      httpStatusCode: statusCode || 400,
+    });
+  }
+};
+
+exports.updateAccessKeyId = async (req, res) => {
+  try {
+    const newKey = `ST+${randomStr(16)}`;
+
+    await UserModel.updateOne(
+      { _id: req.user.id },
+      { $set: { accessKeyId: newKey } },
+    );
+
+    response({
+      res,
+      message: 'Access key ID updated successfully',
+      payload: newKey,
+    });
+  }
+  catch (error0) {
+    const { statusCode, message } = error0;
+
+    response({
+      res,
+      success: false,
+      message,
+      httpStatusCode: statusCode || 400,
     });
   }
 };
