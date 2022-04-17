@@ -11,6 +11,7 @@ const zip = require('../controllers/internal/zip');
 router.post('/register', user.register);
 router.post('/login', user.login);
 router.get('/user', authenticate, user.find);
+router.put('/user/accessKeyId', authenticate, user.updateAccessKeyId);
 
 router.post('/trash', authenticate, trash.insert);
 router.get('/trash', authenticate, trash.find);
@@ -21,6 +22,7 @@ router.get('/documents', authenticate, document.find);
 router.get('/documents/:id/file/:filename', document.open);
 router.get('/documents/size', authenticate, document.size);
 router.post('/documents', authenticate, upload.array('file'), document.insert);
+router.put('/documents/move', authenticate, document.move);
 router.put('/documents/trashing', authenticate, document.trashed);
 
 router.get('/folders', authenticate, folder.find);
