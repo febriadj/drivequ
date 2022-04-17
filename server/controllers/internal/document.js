@@ -1,15 +1,22 @@
 const nodePath = require('path');
 const mv = require('mv');
 const DocModel = require('../../database/models/document');
+const FolderModel = require('../../database/models/folder');
 
 const response = require('../../helpers/response');
 
-exports.insert = (req, res) => {
-  const {
-    location = '/',
-    path = ['/'],
-    parents = [],
-  } = req.body;
+exports.insert = async (req, res) => {
+  const { location = '/' } = req.body;
+
+  let currFolder;
+  if (location !== '/') {
+    currFolder = await FolderModel.findOne({
+      $and: [
+        { userId: req.user.id },
+        { url: location },
+      ],
+    });
+  }
 
   for (let i = 0; i < req.files.length; i += 1) {
     const {
@@ -34,28 +41,33 @@ exports.insert = (req, res) => {
           originalname,
           format,
           location,
-          url: `/${filename}.${format}`,
+          url: `/api/documents/${req.user.id}/file/${filename}.${format}`,
           mimetype,
           size,
-          path: path.length > 1 ? path.split(',') : ['/'],
-          parents: parents.length > 0 ? parents.split(',') : [],
+          path: location === '/' ? ['/'] : currFolder.path,
+          parents: location === '/' ? [] : [...currFolder.parents, currFolder._id.toString()],
         }).save();
+
+        if (i >= req.files.length - 1) {
+          response({
+            res,
+            message: 'Document added successfully',
+            payload: {
+              files: req.files.length,
+            },
+          });
+        }
       }
-      catch (error3) {
+      catch (error0) {
         response({
           res,
-          message: error3.message,
+          httpStatusCode: error0.statusCode || 400,
           success: false,
-          httpStatusCode: 400,
+          message: error0.message,
         });
       }
     });
   }
-
-  response({
-    res,
-    message: 'Document added successfully',
-  });
 };
 
 exports.find = async (req, res) => {
@@ -138,9 +150,9 @@ exports.find = async (req, res) => {
   catch (error0) {
     response({
       res,
-      message: error0.message,
+      httpStatusCode: error0.statusCode || 400,
       success: false,
-      httpStatusCode: 400,
+      message: error0.message,
     });
   }
 };
@@ -153,9 +165,9 @@ exports.open = async (req, res) => {
   catch (error0) {
     response({
       res,
-      message: error0.message,
+      httpStatusCode: error0.statusCode || 400,
       success: false,
-      httpStatusCode: 400,
+      message: error0.message,
     });
   }
 };
@@ -182,9 +194,9 @@ exports.trashed = async (req, res) => {
   catch (error0) {
     response({
       res,
-      message: error0.message,
+      httpStatusCode: error0.statusCode || 400,
       success: false,
-      httpStatusCode: 400,
+      message: error0.message,
     });
   }
 };
@@ -208,5 +220,52 @@ exports.size = async (req, res) => {
   }
   catch (error0) {
     response({ res, payload: 0 });
+  }
+};
+
+exports.move = async (req, res) => {
+  try {
+    const { location = '/' } = req.body;
+    let targetFolder;
+
+    if (location !== '/') {
+      targetFolder = await FolderModel.findOne({
+        $and: [
+          { userId: req.user.id },
+          { url: location },
+        ],
+      });
+    }
+
+    const documents = await DocModel.updateMany(
+      {
+        $and: [
+          { userId: req.user.id },
+          { _id: { $in: req.body.id } },
+        ],
+      },
+      {
+        $set: {
+          path: location === '/' ? ['/'] : targetFolder.path,
+          parents: location === '/' ? [] : [...targetFolder.parents, targetFolder._id.toString()],
+          location,
+        },
+      },
+      { multi: true },
+    );
+
+    response({
+      res,
+      message: 'Successfully updated documents',
+      payload: documents,
+    });
+  }
+  catch (error0) {
+    response({
+      res,
+      httpStatusCode: error0.statusCode || 400,
+      success: false,
+      message: error0.message,
+    });
   }
 };
