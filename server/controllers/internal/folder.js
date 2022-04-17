@@ -7,9 +7,7 @@ exports.insert = async (req, res) => {
     const {
       name,
       description = '',
-      location = ['/'],
-      path = [],
-      parents = [],
+      location = '/',
     } = req.body;
 
     if (name.length > 30) {
@@ -19,11 +17,21 @@ exports.insert = async (req, res) => {
       throw newError;
     }
 
+    let currFolder;
+    if (location !== '/') {
+      currFolder = await FolderModel.findOne({
+        $and: [
+          { userId: req.user.id },
+          { url: location },
+        ],
+      });
+    }
+
     const folderNameExists = await FolderModel.findOne({
       $and: [
-        { userId: { $eq: req.user.id } },
-        { $expr: { $eq: [{ $last: '$location' }, location[location.length - 1]] } },
-        { name: { $eq: name } },
+        { userId: req.user.id },
+        { name },
+        { $expr: { $eq: [{ $last: '$location' }, location] } },
       ],
     });
 
@@ -38,10 +46,10 @@ exports.insert = async (req, res) => {
       userId: req.user.id,
       name,
       url: `/${uuidv4()}`,
-      location,
       description,
-      path,
-      parents,
+      location: location === '/' ? ['/'] : [...currFolder.location, location],
+      path: location === '/' ? ['/', name] : [...currFolder.path, name],
+      parents: location === '/' ? [] : [...currFolder.parents, currFolder._id.toString()],
     }).save();
 
     response({

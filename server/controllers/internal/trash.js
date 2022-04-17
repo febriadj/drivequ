@@ -12,9 +12,9 @@ exports.insert = async (req, res) => {
         $or: [
           {
             $and: [
-              { userId: { $eq: req.user.id } },
+              { userId: req.user.id },
               { _id: { $in: req.body } },
-              { trashed: { $eq: false } },
+              { trashed: false },
             ],
           },
           { parents: { $elemMatch: { $in: req.body } } },
@@ -47,8 +47,8 @@ exports.find = async (req, res) => {
   try {
     const query = {
       $and: [
-        { userId: { $eq: req.user.id } },
-        { trashed: { $eq: true } },
+        { userId: req.user.id },
+        { trashed: true },
       ],
     };
 
@@ -82,9 +82,9 @@ exports.delete = async (req, res) => {
       $or: [
         {
           $and: [
-            { userId: { $eq: req.user.id } },
+            { userId: req.user.id },
             { _id: { $in: req.body } },
-            { trashed: { $eq: true } },
+            { trashed: true },
           ],
         },
         {
@@ -132,9 +132,9 @@ exports.recover = async (req, res) => {
         $or: [
           {
             $and: [
-              { userId: { $eq: req.user.id } },
+              { userId: req.user.id },
               { _id: { $in: req.body } },
-              { trashed: { $eq: true } },
+              { trashed: true },
             ],
           },
           { parents: { $elemMatch: { $in: req.body } } },
