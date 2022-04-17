@@ -52,7 +52,7 @@ exports.insert = async (req, res) => {
           url: `/api/documents/${req.user.id}/file/${filename}.${format}`,
           mimetype,
           size,
-          path: location === '/' ? ['/'] : [...currFolder.path, currFolder.name],
+          path: location === '/' ? ['/'] : currFolder.path,
           parents: location === '/' ? [] : [...currFolder.parents, currFolder._id.toString()],
         }).save();
 
