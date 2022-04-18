@@ -14,8 +14,11 @@ function Register({ setLoginFormIsOpen }) {
     company: '',
   });
 
-  const [message, setMessage] = useState('');
   const [modalOption, setModalOption] = useState(false);
+  const [response, setResponse] = useState({
+    success: false,
+    message: '',
+  });
 
   const handleChange = (event) => {
     setForm((prev) => ({
@@ -39,7 +42,7 @@ function Register({ setLoginFormIsOpen }) {
         throw newError;
       }
 
-      const { data } = await axios.post('/register', {
+      const { data } = await axios.post('/api/in/register', {
         email: form.email,
         password: form.password,
         name: {
@@ -51,12 +54,19 @@ function Register({ setLoginFormIsOpen }) {
         accType: form.accType,
       });
 
-      if (!data.success) throw data.response.data;
-
       setTimeout(() => setLoginFormIsOpen(true), 1000);
+      setResponse((prev) => ({
+        ...prev,
+        success: true,
+        message: data.message,
+      }));
     }
     catch (error0) {
-      setMessage(error0.response.data.message);
+      setResponse((prev) => ({
+        ...prev,
+        success: false,
+        message: error0.response.data.message,
+      }));
     }
   };
 
@@ -220,7 +230,7 @@ function Register({ setLoginFormIsOpen }) {
           </label>
         </span>
         <div className="grid">
-          <p className="text-base text-red-900 first-letter:uppercase underline">{message}</p>
+          <p className={`text-base ${response.success ? 'text-black' : 'text-red-900'} first-letter:uppercase`}>{response.message}</p>
           <div className="grid grid-cols-2/1fr-auto gap-2.5 mt-3.5">
             <button
               type="submit"

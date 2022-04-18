@@ -30,7 +30,7 @@ function Login({ setLoginFormIsOpen }) {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      const { data } = await axios.post('/login', form);
+      const { data } = await axios.post('/api/in/login', form);
 
       if (!data.success) throw data;
       setResponse((prev) => ({
@@ -117,7 +117,7 @@ function Login({ setLoginFormIsOpen }) {
           </button>
         </div>
         <div className="grid mt-5">
-          <p className={`text-base ${response.success ? 'text-black' : 'text-red-900'} first-letter:uppercase underline`}>{response.message}</p>
+          <p className={`text-base ${response.success ? 'text-black' : 'text-red-900'} first-letter:uppercase`}>{response.message}</p>
           <div className="grid grid-cols-2/1fr-auto gap-2.5 mt-3.5">
             <button
               type="submit"
