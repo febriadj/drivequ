@@ -30,6 +30,7 @@ function Home() {
 
   const [modal, setModal] = useState({
     insert: false,
+    sidebarInsert: false,
     newFolder: false,
   });
 
@@ -37,13 +38,14 @@ function Home() {
 
   const handleGetDocs = async () => {
     try {
-      const { data } = await axios.get('/documents', {
-        params: {
-          location: '/',
-          trashed: false,
-        },
+      const { data } = await axios({
+        method: 'GET',
+        url: '/api/in/documents',
         headers: {
           Authorization: `Bearer ${token}`,
+        },
+        params: {
+          location: '/',
         },
       });
 
@@ -56,9 +58,13 @@ function Home() {
 
   const handleGetFolders = async () => {
     try {
-      const { data } = await axios.get('/folders', {
+      const { data } = await axios({
+        method: 'GET',
+        url: '/api/in/folders',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         params: { location: '/' },
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       setFolders(data.payload);
@@ -71,17 +77,21 @@ function Home() {
   const handleTrashing = async () => {
     try {
       await axios({
-        method: 'post',
-        url: '/trash',
-        data: selected.payload.map(({ id }) => id),
+        method: 'POST',
+        url: '/api/in/trash',
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: selected.payload.map(({ id }) => id),
       });
 
       dispatch(totalSize(await helper.totalSize({ trashed: false })));
       handleGetDocs();
       handleGetFolders();
+
+      setSelected((prev) => ({
+        ...prev, types: [], payload: [],
+      }));
     }
     catch (error0) {
       console.error(error0.response.data.message);
@@ -89,7 +99,7 @@ function Home() {
   };
 
   useEffect(() => {
-    document.title = 'My Storage - CloudSync';
+    document.title = 'My Storage - Storager';
     handleGetDocs();
     handleGetFolders();
 
@@ -118,10 +128,16 @@ function Home() {
       <comp0.navbar />
       <comp0.sidebar
         page="/"
+        setModal={setModal}
+        modal={modal}
+        handleGetDocs={handleGetDocs}
+        currentFolder={null}
+        location="/"
       />
       {
         modal.newFolder && (
           <comp0.newFolder
+            page="/"
             setModal={setModal}
             handleGetFolders={handleGetFolders}
             location="/"
@@ -160,8 +176,7 @@ function Home() {
 
                 setInsertPos(event.clientX - pos);
                 setModal((prev) => ({
-                  ...prev,
-                  insert: !prev.insert,
+                  ...prev, insert: !prev.insert, sidebarInsert: false,
                 }));
               }}
             >
@@ -184,8 +199,8 @@ function Home() {
                       </Link>
                     ) : (
                       <a
-                        href={`${axios.defaults.baseURL}/documents/${store.auth.user._id}/file${selected.payload[selected.payload.length - 1].url}`}
-                        type="button"
+                        target="blank"
+                        href={`${axios.defaults.baseURL}${selected.payload[selected.payload.length - 1].url}`}
                         className="p-2 hover:bg-gray-100 rounded-[50%]"
                       >
                         <icon.BiLinkExternal className="text-2xl" />
@@ -239,6 +254,8 @@ function Home() {
               folders={folders}
               location="/"
               setSelected={setSelected}
+              handleGetDocs={handleGetDocs}
+              handleGetFolders={handleGetFolders}
             />
           </div>
           <div className={`

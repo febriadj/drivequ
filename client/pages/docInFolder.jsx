@@ -34,6 +34,7 @@ function DocInFolder() {
 
   const [modal, setModal] = useState({
     insert: false,
+    sidebarInsert: false,
     newFolder: false,
   });
 
@@ -41,7 +42,9 @@ function DocInFolder() {
 
   const handleGetDocs = async () => {
     try {
-      const { data } = await axios.get('/documents', {
+      const { data } = await axios({
+        method: 'GET',
+        url: '/api/in/documents',
         params: {
           location: location.pathname.replace(/.+?(?=[/])/, ''),
         },
@@ -50,7 +53,6 @@ function DocInFolder() {
         },
       });
 
-      if (!data.success) throw data;
       setDocuments(data.payload);
     }
     catch (error0) {
@@ -60,7 +62,9 @@ function DocInFolder() {
 
   const handleGetFolders = async () => {
     try {
-      const request = await axios.get('/folders', {
+      const { data } = await axios({
+        method: 'GET',
+        url: '/api/in/folders',
         params: {
           location: location.pathname.replace(/.+?(?=[/])/, ''),
         },
@@ -68,9 +72,6 @@ function DocInFolder() {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      const { data } = request;
-      if (!data.success) throw data;
 
       setFolders(data.payload);
     }
@@ -81,7 +82,9 @@ function DocInFolder() {
 
   const handleGetCurrentFolder = async () => {
     try {
-      const request = await axios.get('/folders', {
+      const { data } = await axios({
+        method: 'GET',
+        url: '/api/in/folders',
         params: {
           url: location.pathname.replace(/.+?(?=[/])/, ''),
         },
@@ -90,11 +93,8 @@ function DocInFolder() {
         },
       });
 
-      const { data } = request;
-      if (!data.success) throw data;
-
       setCurrentFolder(data.payload);
-      document.title = `${data.payload.name} - CloudSync`;
+      document.title = `${data.payload.name} - Storager`;
     }
     catch (error0) {
       console.error(error0.message);
@@ -104,12 +104,12 @@ function DocInFolder() {
   const handleTrashing = async () => {
     try {
       await axios({
-        method: 'post',
-        url: '/trash',
-        data: selected.payload.map(({ id }) => id),
+        method: 'POST',
+        url: '/api/in/trash',
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: selected.payload.map(({ id }) => id),
       });
 
       dispatch(totalSize(await helper.totalSize({ trashed: false })));
@@ -122,7 +122,7 @@ function DocInFolder() {
       }));
     }
     catch (error0) {
-      console.error(error0.message);
+      console.error(error0.response.data.message);
     }
   };
 
@@ -162,10 +162,16 @@ function DocInFolder() {
       <comp0.navbar />
       <comp0.sidebar
         page="/"
+        setModal={setModal}
+        modal={modal}
+        handleGetDocs={handleGetDocs}
+        currentFolder={currentFolder}
+        location={location.pathname.replace(/.+?(?=[/])/, '')}
       />
       {
         modal.newFolder && (
           <comp0.newFolder
+            page="/"
             location={location.pathname.replace(/.+?(?=[/])/, '')}
             setModal={setModal}
             handleGetFolders={handleGetFolders}
@@ -211,20 +217,51 @@ function DocInFolder() {
 
                       setInsertPos(event.clientX - (less ? pos : pos + 120));
                       setModal((prev) => ({
-                        ...prev,
-                        insert: !prev.insert,
+                        ...prev, insert: !prev.insert, sidebarInsert: false,
                       }));
                     } else {
                       navigate(item === '/' ? '/' : `/folder${currentFolder.location[index]}`);
                     }
                   }}
                   key={item}
+                  onDragEnter={(event) => {
+                    event.currentTarget.classList.add('bg-gray-100');
+                  }}
+                  onDragLeave={(event) => {
+                    event.currentTarget.classList.remove('bg-gray-100');
+                  }}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                  }}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    event.currentTarget.classList.remove('bg-gray-100');
+
+                    const { dataTransfer } = event;
+
+                    if (index < currentFolder.path.length - 1) {
+                      helper.moveLocation({
+                        queries: {
+                          location: index === 0 ? '/' : currentFolder.location[index],
+                          id: dataTransfer.getData('id'),
+                          index: dataTransfer.getData('index'),
+                        },
+                        actions: {
+                          handleGetDocs,
+                          handleGetFolders,
+                        },
+                      });
+                    } else {
+                      const tr = document.querySelectorAll('#myStorage-table tr')[folders.length + Number(dataTransfer.getData('index'))];
+                      tr.classList.remove('opacity-0');
+                    }
+                  }}
                 >
-                  <h3 className="text-xl whitespace-nowrap">{item}</h3>
+                  <h3 className="text-xl whitespace-nowrap pointer-events-none">{item}</h3>
                   {
                     item === currentFolder.path[currentFolder.path.length - 1]
-                      ? <icon.BiChevronDown className="text-2xl" />
-                      : <icon.BiChevronRight className="text-2xl" />
+                      ? <icon.BiChevronDown className="text-2xl pointer-events-none" />
+                      : <icon.BiChevronRight className="text-2xl pointer-events-none" />
                   }
                 </button>
               ))
@@ -245,8 +282,8 @@ function DocInFolder() {
                       </Link>
                     ) : (
                       <a
-                        href={`${axios.defaults.baseURL}/documents/${store.auth.user._id}/file${selected.payload[selected.payload.length - 1].url}`}
-                        type="button"
+                        target="blank"
+                        href={`${axios.defaults.baseURL}${selected.payload[selected.payload.length - 1].url}`}
                         className="p-2 hover:bg-gray-100 rounded-[50%]"
                       >
                         <icon.BiLinkExternal className="text-2xl" />
@@ -301,6 +338,8 @@ function DocInFolder() {
               folders={folders}
               location={location.pathname.replace(/.+?(?=[/])/, '')}
               setSelected={setSelected}
+              handleGetFolders={handleGetFolders}
+              handleGetDocs={handleGetDocs}
             />
           </div>
           <div className={`
