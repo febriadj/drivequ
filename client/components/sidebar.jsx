@@ -6,19 +6,50 @@ import * as icon from 'react-icons/bi';
 import * as helper from '../helpers';
 import { exportModal } from '../redux/features/modal';
 
-function Sidebar({ page }) {
+import Insert from './sidebar/insert';
+
+function Sidebar({
+  page,
+  setModal,
+  modal,
+  handleGetDocs,
+  currentFolder,
+  location,
+}) {
   const dispatch = useDispatch();
   const { size } = useSelector((state) => state.document);
 
   return (
-    <div className="absolute w-full h-14 flex border-0 border-t border-solid bg-white border-gray-300 z-10 sm:z-0 sm:left-0 bottom-0 sm:bg-white sm:h-full sm:w-16 sm:block md:w-56">
+    <div className="absolute w-full h-16 flex border-0 border-t border-solid bg-white border-gray-300 z-10 sm:left-0 bottom-0 sm:bg-white sm:h-full sm:w-16 sm:block md:w-56">
       <div className="w-full h-full flex px-3.5 sm:px-0">
         <div className="w-full sm:mt-16 sm:pt-5 grid grid-cols-3/auto-1fr-auto items-center md:items-start sm:flex sm:flex-col">
-          <div className="flex md:ml-2.5">
-            <button type="button" className="flex items-center justify-center gap-2.5 py-2.5 px-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-[50%] md:justify-start md:rounded-3xl md:pl-4 md:pr-5 md:w-full">
+          <div className="relative flex md:ml-2.5">
+            <button
+              type="button"
+              className="flex items-center justify-center gap-2.5 py-2.5 px-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-[50%] md:justify-start md:rounded-3xl md:pl-4 md:pr-5 md:w-full"
+              onClick={() => {
+                setModal((prev) => ({
+                  ...prev,
+                  insert: false,
+                  sidebarInsert: !prev.sidebarInsert,
+                  newFolder: false,
+                }));
+              }}
+            >
               <icon.BiPlus className="text-2xl" />
               <p className="text-base hidden md:block">New</p>
             </button>
+            {
+              modal.sidebarInsert && (
+                <Insert
+                  page={page}
+                  setModal={setModal}
+                  location={location}
+                  handleGetDocs={handleGetDocs}
+                  currentFolder={currentFolder}
+                />
+              )
+            }
           </div>
           <div className="w-full flex justify-center sm:flex-col items-center md:items-start sm:mt-5">
             <Link to="/" className={`flex items-center justify-center gap-5 py-2.5 px-2.5 rounded-[50%] md:justify-start md:rounded-none md:rounded-r-3xl md:px-5 md:w-full ${page === '/' && 'bg-gray-100'}`}>
