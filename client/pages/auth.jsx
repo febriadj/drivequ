@@ -5,7 +5,7 @@ function Auth() {
   const [loginFormIsOpen, setLoginFormIsOpen] = useState(true);
 
   useEffect(() => {
-    document.title = `${loginFormIsOpen ? 'Sign In' : 'Sign Up'} - CloudSync`;
+    document.title = `${loginFormIsOpen ? 'Sign In' : 'Sign Up'} - Storager`;
   }, [loginFormIsOpen]);
 
   return (

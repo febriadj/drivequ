@@ -34,12 +34,14 @@ function Trash() {
 
   const handleGetTrashed = async () => {
     try {
-      const { data } = await axios.get('/trash', {
-        params: {
-          trashed: true,
-        },
+      const { data } = await axios({
+        method: 'GET',
+        url: '/api/in/trash',
         headers: {
           Authorization: `Bearer ${token}`,
+        },
+        params: {
+          trashed: true,
         },
       });
 
@@ -54,16 +56,15 @@ function Trash() {
 
   const handleDeleteJunkDocs = async () => {
     try {
-      const { data } = await axios({
-        method: 'delete',
-        url: '/trash',
-        data: selected.payload.map(({ id }) => id),
+      await axios({
+        method: 'DELETE',
+        url: '/api/in/trash',
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: selected.payload.map(({ id }) => id),
       });
 
-      if (!data.success) throw data;
       handleGetTrashed();
     }
     catch (error0) {
@@ -74,8 +75,8 @@ function Trash() {
   const handleRecovery = async () => {
     try {
       await axios({
-        method: 'put',
-        url: '/trash/recover',
+        method: 'PUT',
+        url: '/api/in/trash/recover',
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -92,7 +93,7 @@ function Trash() {
   };
 
   useEffect(() => {
-    document.title = 'Trash - CloudSync';
+    document.title = 'Trash - Storager';
     handleGetTrashed();
   }, []);
 
@@ -107,13 +108,27 @@ function Trash() {
           />
         )
       }
-      { store.logoutIsOpen && <comp0.logout /> }
+      { store.modal.logoutIsOpen && <comp0.logout /> }
       { store.modal.exportIsOpen && <comp0.exportModal /> }
 
       <comp0.navbar />
       <comp0.sidebar
         page="/trash"
+        setModal={setModal}
+        modal={modal}
+        currentFolder={null}
+        location="/"
       />
+      {
+        modal.newFolder && (
+          <comp0.newFolder
+            page="/trash"
+            setModal={setModal}
+            location="/"
+            folders={null}
+          />
+        )
+      }
       {
         modal.clear && (
           <comp1.modalClear
