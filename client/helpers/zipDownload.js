@@ -5,8 +5,8 @@ export default async (payload = null) => {
     const token = localStorage.getItem('token');
 
     const { data } = await axios({
-      method: 'post',
-      url: '/zip',
+      method: 'POST',
+      url: '/api/in/zip',
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -17,7 +17,7 @@ export default async (payload = null) => {
       const el = document.createElement('a');
       el.style = 'display: none';
 
-      el.href = axios.defaults.baseURL + data.payload.url;
+      el.href = `${axios.defaults.baseURL}${data.payload.url}`;
       el.download = data.payload.filename;
       el.click();
 

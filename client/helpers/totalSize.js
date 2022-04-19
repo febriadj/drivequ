@@ -6,7 +6,7 @@ export default async ({
   try {
     const token = localStorage.getItem('token');
 
-    const { data } = await axios.get('/documents/size', {
+    const { data } = await axios.get('/api/in/documents/size', {
       params: { trashed },
       headers: {
         Authorization: `Bearer ${token}`,
