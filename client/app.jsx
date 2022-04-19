@@ -16,7 +16,7 @@ function App() {
 
   const handleLogin = async () => {
     try {
-      const { data } = await axios.get('/user', {
+      const { data } = await axios.get('/api/in/user', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
