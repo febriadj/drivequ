@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 
 function NewFolder({
+  page,
   setModal,
   handleGetFolders,
   detail,
   location,
 }) {
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
+
   const [response, setResponse] = useState({
     success: true,
     message: '',
@@ -23,33 +27,34 @@ function NewFolder({
     try {
       event.preventDefault();
 
-      await axios.post('/folders', {
+      await axios.post('/api/in/folders', {
         name: form.name,
         description: form.description,
-        location: detail ? [...detail.location, location] : ['/'],
-        path: detail ? [...detail.path, form.name] : ['/', form.name],
-        parents: detail ? [...detail.parents, detail._id] : [],
+        location: detail ? location : '/',
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      handleGetFolders();
-      setForm((prev) => ({
-        ...prev, name: '', description: '',
-      }));
+      setForm((prev) => ({ ...prev, name: '', description: '' }));
+      setResponse((prev) => ({ ...prev, success: true, message: '' }));
 
-      setResponse((prev) => ({
-        ...prev, success: true, message: '',
-      }));
-
-      setTimeout(() => {
-        setModal((prev) => ({
-          ...prev,
-          newFolder: false,
-        }));
-      }, 500);
+      if (page === '/trash') {
+        setTimeout(() => {
+          setModal((prev) => ({
+            ...prev, newFolder: false,
+          }));
+        }, 200);
+        setTimeout(() => navigate('/'), 500);
+      } else {
+        handleGetFolders();
+        setTimeout(() => {
+          setModal((prev) => ({
+            ...prev, newFolder: false,
+          }));
+        }, 500);
+      }
     }
     catch (error0) {
       setResponse((prev) => ({
