@@ -9,6 +9,8 @@ import { totalSize } from '../redux/features/document';
 import * as comp0 from '../components';
 import * as comp1 from '../components/trash';
 import * as detail from '../components/detail';
+import Navbar from '../components/navbar';
+import Sidebar from '../components/sidebar';
 
 function Trash() {
   const token = localStorage.getItem('token');
@@ -111,8 +113,8 @@ function Trash() {
       { store.modal.logoutIsOpen && <comp0.logout /> }
       { store.modal.exportIsOpen && <comp0.exportModal /> }
 
-      <comp0.navbar />
-      <comp0.sidebar
+      <Navbar />
+      <Sidebar
         page="/trash"
         setModal={setModal}
         modal={modal}
