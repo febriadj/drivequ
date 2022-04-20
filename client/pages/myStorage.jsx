@@ -10,7 +10,10 @@ import { totalSize } from '../redux/features/document';
 
 import * as comp0 from '../components';
 import * as comp1 from '../components/myStorage';
+
 import * as detail from '../components/detail';
+import Navbar from '../components/navbar';
+import Sidebar from '../components/sidebar';
 
 function Home() {
   const token = localStorage.getItem('token');
@@ -125,8 +128,8 @@ function Home() {
       { store.modal.zipDownloadIsOpen && <comp0.zipDownload /> }
       { store.modal.exportIsOpen && <comp0.exportModal /> }
 
-      <comp0.navbar />
-      <comp0.sidebar
+      <Navbar />
+      <Sidebar
         page="/"
         setModal={setModal}
         modal={modal}
