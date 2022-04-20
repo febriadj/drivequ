@@ -13,12 +13,14 @@ function SearchTab({
 
   const handleGetDocs = async () => {
     try {
-      const { data } = await axios.get('/documents', {
-        params: {
-          filename: form.filename,
-        },
+      const { data } = await axios({
+        method: 'GET',
+        url: '/api/in/documents',
         headers: {
           Authorization: `Bearer ${token}`,
+        },
+        params: {
+          filename: form.filename,
         },
       });
 
@@ -54,11 +56,12 @@ function SearchTab({
                     event.currentTarget.classList.add('bg-gray-100');
                   }}
                   onDoubleClick={() => {
-                    const link = document.createElement('a');
-                    link.href = `${axios.defaults.baseURL}/documents/${item.userId}/file${item.url}`;
+                    const a = document.createElement('a');
+                    a.target = 'blank';
+                    a.href = `${axios.defaults.baseURL}${item.url}`;
 
-                    link.click();
-                    link.remove();
+                    a.click();
+                    a.remove();
 
                     setSearchTabIsOpen(false);
                   }}
@@ -68,9 +71,9 @@ function SearchTab({
                       /image/.test(item.mimetype) ? (
                         <span className="relative w-6 h-6 overflow-hidden flex justify-center items-center bg-gray-800">
                           <img
-                            src={`${axios.defaults.baseURL}/documents/${item.userId}/file${item.url}`}
+                            src={`${axios.defaults.baseURL}${item.url}`}
                             alt=""
-                            className="w-[100%] h-[100%]"
+                            className="w-full h-full"
                           />
                         </span>
                       ) : (
