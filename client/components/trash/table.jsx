@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 import * as helper from '../../helpers';
@@ -9,15 +9,11 @@ function Table({
   setSelected,
   size,
 }) {
-  const [doubleKeys, setDoubleKeys] = useState({
-    multipleSelect: false,
-  });
-
   const handleOnSelection = (event, item) => {
     const e = event.currentTarget;
     const tr = [...document.getElementsByTagName('tr')];
 
-    if (doubleKeys.multipleSelect) {
+    if (event.ctrlKey) {
       setSelected((prev) => {
         const exists = prev.payload.find((item1) => item1 === item.id);
         const indexOfItem = prev.payload.indexOf(exists);
@@ -50,26 +46,8 @@ function Table({
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'Control') {
-        setDoubleKeys((prev) => ({
-          ...prev,
-          multipleSelect: true,
-        }));
-      }
-    });
-
-    window.addEventListener('keyup', () => {
-      setDoubleKeys((prev) => ({
-        ...prev,
-        multipleSelect: false,
-      }));
-    });
-  }, []);
-
   return (
-    <div className="absolute w-full flex mt-20 pb-5">
+    <div className="absolute w-full flex mt-20 pb-8">
       <table className="w-full border-collapse md:mr-5">
         <thead>
           <tr className="h-12 px-1.5 sm:px-0 grid sm:grid-cols-2/1fr-0.3fr md:grid-cols-4/1fr-0.5fr-0.5fr-0.5fr items-center border-0 border-b border-solid border-gray-300">
@@ -121,9 +99,9 @@ function Table({
                     /image/.test(item.mimetype) ? (
                       <span className="relative w-6 h-6 overflow-hidden flex justify-center items-center bg-gray-800">
                         <img
-                          src={`${axios.defaults.baseURL}/documents/${item.userId}/file${item.url}`}
+                          src={`${axios.defaults.baseURL}${item.url}`}
                           alt=""
-                          className="w-[100%] h-[100%]"
+                          className="w-full h-full"
                         />
                       </span>
                     ) : (

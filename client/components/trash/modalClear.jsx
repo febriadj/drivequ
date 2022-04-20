@@ -16,12 +16,12 @@ function ModalClear({
       const merge = [...folders.map(({ _id }) => _id), ...documents.map(({ _id }) => _id)];
 
       await axios({
-        method: 'delete',
-        url: '/trash',
-        data: merge,
+        method: 'DELETE',
+        url: '/api/in/trash',
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: merge,
       });
 
       handleGetTrashedDocs();
@@ -34,7 +34,7 @@ function ModalClear({
       }, 500);
     }
     catch (error0) {
-      console.error(error0.message);
+      console.error(error0.response.data.message);
     }
   };
 
