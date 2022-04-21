@@ -3,10 +3,10 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import * as icon from 'react-icons/bi';
 
-import { logoutModal } from '../redux/features/modal';
-import { updateAccessKeyId } from '../redux/features/auth';
+import { logoutModal } from '../../redux/features/modal';
+import { updateAccessKeyId } from '../../redux/features/auth';
 
-function Profile({ setProfileIsOpen }) {
+function Profile({ setTab }) {
   const token = localStorage.getItem('token');
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -36,7 +36,10 @@ function Profile({ setProfileIsOpen }) {
         <button
           type="button"
           className="p-1.5 rounded-[50%] hover:bg-gray-500 translate-x-1.5"
-          onClick={() => setProfileIsOpen(false)}
+          onClick={() => setTab((prev) => ({
+            ...prev,
+            profileIsOpen: false,
+          }))}
         >
           <icon.BiX className="text-2xl" />
         </button>
@@ -67,7 +70,10 @@ function Profile({ setProfileIsOpen }) {
           type="button"
           className="bg-gray-100 py-1.5 px-3.5 rounded-md mt-2.5 hover:bg-gray-200"
           onClick={() => {
-            setProfileIsOpen(false);
+            setTab((prev) => ({
+              ...prev,
+              profileIsOpen: false,
+            }));
 
             setTimeout(() => {
               dispatch(logoutModal());

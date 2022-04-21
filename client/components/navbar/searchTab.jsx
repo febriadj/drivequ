@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
-import * as helper from '../helpers';
+import * as helper from '../../helpers';
 
 function SearchTab({
   setForm,
   form,
-  setSearchTabIsOpen,
+  setTab,
 }) {
   const token = localStorage.getItem('token');
   const [documents, setDocuments] = useState([]);
@@ -63,10 +63,13 @@ function SearchTab({
                     a.click();
                     a.remove();
 
-                    setSearchTabIsOpen(false);
+                    setTab((prev) => ({
+                      ...prev,
+                      searchIsOpen: false,
+                    }));
                   }}
                 >
-                  <td className="truncate flex items-center gap-3.5">
+                  <td className="truncate flex items-center gap-3.5 px-0">
                     {
                       /image/.test(item.mimetype) ? (
                         <span className="relative w-6 h-6 overflow-hidden flex justify-center items-center bg-gray-800">
@@ -85,18 +88,18 @@ function SearchTab({
                       <p className="text-sm truncate">{item.originalname}</p>
                     </div>
                   </td>
-                  <td className="hidden sm:block truncate text-right">{helper.formatDate(item.createdAt)}</td>
+                  <td className="hidden sm:block truncate text-right px-0">{helper.formatDate(item.createdAt)}</td>
                 </tr>
               ))
             }
           </tbody>
         </table>
       </div>
-      <div className="flex justify-between items-end mt-2.5 mr-1.5">
-        <p className="bg-gray-100 px-2.5 rounded-md">{`${documents.length} results`}</p>
+      <div className="flex justify-between items-center mt-3.5 mr-3.5">
+        <p>{`${documents.length} results`}</p>
         <button
           type="button"
-          className="p-1.5 rounded-[50%] hover:bg-gray-100 translate-y-1.5"
+          className="py-1.5 px-2.5 rounded-md hover:bg-gray-200 w-28 bg-gray-100"
           onClick={() => {
             setForm((prev) => ({
               ...prev,
@@ -104,7 +107,7 @@ function SearchTab({
             }));
           }}
         >
-          <icon.BiRotateLeft className="text-2xl" />
+          Reset
         </button>
       </div>
     </div>
