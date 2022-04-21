@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as icon from 'react-icons/bi';
 
-import * as helper from '../helpers';
-import { exportModal } from '../redux/features/modal';
+import * as helper from '../../helpers';
+import { exportModal } from '../../redux/features/modal';
 
-import Insert from './sidebar/insert';
+import Insert from './insert';
 
 function Sidebar({
   page,
