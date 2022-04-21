@@ -9,7 +9,6 @@ function Insert({
   setModal,
   location,
   handleGetDocs,
-  currentFolder,
   position,
 }) {
   const token = localStorage.getItem('token');
@@ -19,21 +18,19 @@ function Insert({
     try {
       const fd = new FormData();
 
+      fd.append('location', location);
       for (let i = 0; i < event.target.files.length; i += 1) {
         fd.append('file', event.target.files[i]);
       }
-      fd.append('location', location);
-      fd.append('parents', currentFolder ? [...currentFolder.parents, currentFolder._id] : []);
-      fd.append('path', currentFolder ? [...currentFolder.path] : ['/']);
 
       await axios({
-        method: 'post',
-        url: 'http://localhost:5050/api/in/documents',
-        data: fd,
+        method: 'POST',
+        url: '/api/in/documents',
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
+        data: fd,
       });
 
       handleGetDocs();
@@ -47,7 +44,7 @@ function Insert({
       }, 500);
     }
     catch (error0) {
-      console.error(error0.message);
+      console.error(error0.response.data.message);
     }
   };
 
@@ -65,8 +62,9 @@ function Insert({
           onClick={() => {
             setModal((prev) => ({
               ...prev,
-              insert: !prev.insert,
-              newFolder: !prev.newFolder,
+              insert: false,
+              sidebarInsert: false,
+              newFolder: true,
             }));
           }}
         >
@@ -103,7 +101,7 @@ function Insert({
               webkitdirectory="true"
               directory="true"
               className="hidden"
-              onChange={(event) => console.log(event)}
+              onChange={(event) => console.log(event.target.files)}
             />
           </label>
         </form>
