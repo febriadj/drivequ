@@ -22,25 +22,29 @@ function Side({
       const { types, payload } = selected;
 
       if (types[types.length - 1] === 'file') {
-        const { data } = await axios('/documents', {
+        const { data } = await axios({
+          method: 'GET',
+          url: '/api/in/documents',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: {
             id: payload[payload.length - 1].id,
             trashed: trashedRequest ?? false,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
           },
         });
 
         request = data.payload;
       } else {
-        const { data } = await axios('/folders', {
+        const { data } = await axios({
+          method: 'GET',
+          url: '/api/in/folders',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: {
             id: payload[payload.length - 1].id,
             trashed: trashedRequest ?? false,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -55,13 +59,11 @@ function Side({
   };
 
   useEffect(() => {
-    (async () => {
-      if (selected.payload.length > 0) {
-        await handleGetDoc();
-      } else {
-        setDoc(null);
-      }
-    })();
+    if (selected.payload.length > 0) {
+      handleGetDoc();
+    } else {
+      setDoc(null);
+    }
   }, [selected]);
 
   return (
@@ -96,7 +98,7 @@ function Side({
             doc && doc.type === 'file' && /image/i.test(doc.mimetype) && (
               <div className="relative w-full h-60 flex justify-center items-center bg-black overflow-hidden">
                 <img
-                  src={`${axios.defaults.baseURL}/documents/${doc.userId}/file${doc && doc.url}`}
+                  src={`${axios.defaults.baseURL}${doc && doc.url}`}
                   alt=""
                   className="w-full"
                 />
@@ -156,7 +158,11 @@ function Side({
                   <p className="whitespace-nowrap">{doc._id}</p>
                   <p className="whitespace-nowrap">{doc.type === 'file' ? `${doc.filename}.${doc.format}` : doc.name}</p>
                   <p className="whitespace-nowrap">{doc.type === 'file' ? doc.originalname : '-'}</p>
-                  <p className="whitespace-nowrap">{doc.url}</p>
+                  {
+                    doc.type === 'file'
+                      ? <a href={`${axios.defaults.baseURL}${doc.url}`} target="blank" className="whitespace-nowrap underline underline-offset-1 hover:text-blue-900">{doc.url}</a>
+                      : <p className="whitespace-nowrap">{doc.url}</p>
+                  }
                   <span className="whitespace-nowrap flex items-center">
                     {doc.type === 'file' && doc.path.length > 1 && doc.path.slice(1, doc.path.length).map((item) => <p key={item}>{`/${item}`}</p>)}
                     {doc.type === 'folder' && doc.path.length > 2 && doc.path.slice(1, doc.path.length - 1).map((item) => <p key={item}>{`/${item}`}</p>)}

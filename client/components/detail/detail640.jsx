@@ -17,25 +17,29 @@ function Detail640({
       const { types, payload } = selected;
 
       if (types[types.length - 1] === 'file') {
-        const { data } = await axios('/documents', {
+        const { data } = await axios({
+          method: 'GET',
+          url: '/api/in/documents',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: {
             id: payload[payload.length - 1].id,
             trashed: trashedRequest ?? false,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
           },
         });
 
         request = data.payload;
       } else {
-        const { data } = await axios('/folders', {
+        const { data } = await axios({
+          method: 'GET',
+          url: '/api/in/folders',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: {
             id: payload[payload.length - 1].id,
             trashed: trashedRequest ?? false,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
           },
         });
 
