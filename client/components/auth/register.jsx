@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
+import baseConfig from '../../config';
 
 function Register({ setLoginFormIsOpen }) {
   const [form, setForm] = useState({
@@ -252,7 +253,7 @@ function Register({ setLoginFormIsOpen }) {
       </form>
       <div className="flex items-center gap-1">
         <icon.BiCopyright className="text-base" />
-        <p>{`${new Date().getFullYear()} CloudSync.`}</p>
+        <p>{`${new Date().getFullYear()} ${baseConfig.appName}`}</p>
       </div>
     </div>
   );
