@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import * as icon from 'react-icons/bi';
 import { login } from '../../redux/features/auth';
+import baseConfig from '../../config';
 
 function Login({ setLoginFormIsOpen }) {
   const configs = localStorage.getItem('configs');
@@ -75,7 +76,7 @@ function Login({ setLoginFormIsOpen }) {
           <span className="block w-1 h-1 bg-black rounded-[50%]"></span>
           <h1 className="text-base opacity-50">Sign Up</h1>
         </span>
-        <p>{`${configs && JSON.parse(configs).remember ? 'Welcome back' : 'Welcome to CloudSync'}, please login to your account and enjoy our service`}</p>
+        <p>{`${configs && JSON.parse(configs).remember ? 'Welcome back' : `Welcome to ${baseConfig.appName}`}, please login to your account and enjoy our service`}</p>
       </div>
       <form method="post" className="w-full grid gap-2.5 my-10" onSubmit={handleSubmit}>
         <label htmlFor="email" className={fieldStyle}>
@@ -139,7 +140,7 @@ function Login({ setLoginFormIsOpen }) {
       </form>
       <div className="flex items-center gap-1">
         <icon.BiCopyright className="text-base" />
-        <p>{`${new Date().getFullYear()} CloudSync.`}</p>
+        <p>{`${new Date().getFullYear()} ${baseConfig.appName}`}</p>
       </div>
     </div>
   );
