@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
+import baseConfig from '../config';
 import * as helper from '../helpers';
 
 import { zipDownloadModal } from '../redux/features/modal';
@@ -102,7 +103,7 @@ function Home() {
   };
 
   useEffect(() => {
-    document.title = 'My Storage - Storager';
+    document.title = `My Storage - ${baseConfig.appName}`;
     handleGetDocs();
     handleGetFolders();
 
