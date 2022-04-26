@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import * as comp from '../components/auth';
+import baseConfig from '../config';
 
 function Auth() {
   const [loginFormIsOpen, setLoginFormIsOpen] = useState(true);
 
   useEffect(() => {
-    document.title = `${loginFormIsOpen ? 'Sign In' : 'Sign Up'} - Storager`;
+    document.title = `${loginFormIsOpen ? 'Sign In' : 'Sign Up'} - ${baseConfig.appName}`;
   }, [loginFormIsOpen]);
 
   return (
