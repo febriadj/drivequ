@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as icon from 'react-icons/bi';
 import { Link } from 'react-router-dom';
+import baseConfig from '../../config';
 import avatar from '../../assets/images/avatar.png';
 import Profile from './profile';
 import SearchTab from './searchTab';
@@ -24,7 +25,7 @@ function Navbar() {
         <div className="items-center hidden sm:w-16 sm:flex md:w-56">
           <Link to="/" className="sm:flex items-center gap-1.5 hidden">
             <icon.BiCloudLightning className="text-3xl" />
-            <h3 className="text-xl hidden md:block">Storager</h3>
+            <h3 className="text-xl hidden md:block">{baseConfig.appName}</h3>
           </Link>
         </div>
         <div className="relative h-12">
