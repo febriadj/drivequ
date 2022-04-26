@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import * as icon from 'react-icons/bi';
 
+import baseConfig from '../config';
 import * as helper from '../helpers';
 import { totalSize } from '../redux/features/document';
 
@@ -95,7 +96,7 @@ function Trash() {
   };
 
   useEffect(() => {
-    document.title = 'Trash - Storager';
+    document.title = `Trash - ${baseConfig.appName}`;
     handleGetTrashed();
   }, []);
 
