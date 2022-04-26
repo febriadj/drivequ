@@ -5,6 +5,7 @@ import axios from 'axios';
 import * as icon from 'react-icons/bi';
 import * as helper from '../helpers';
 
+import baseConfig from '../config';
 import { zipDownloadModal } from '../redux/features/modal';
 import { totalSize } from '../redux/features/document';
 
@@ -97,7 +98,7 @@ function DocInFolder() {
       });
 
       setCurrentFolder(data.payload);
-      document.title = `${data.payload.name} - Storager`;
+      document.title = `${data.payload.name} - ${baseConfig.appName}`;
     }
     catch (error0) {
       console.error(error0.message);
