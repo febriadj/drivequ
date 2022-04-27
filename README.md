@@ -1,5 +1,5 @@
-# Storage Service
-Storage service (Cloudipati) is a web-based cloud storage service that is accessed online and can be integrated with various platforms such as web and mobile. Any user can connect his application with this cloud service through the API.
+# DriveKu
+DriveKu is a web-based storage manager that is accessed online and can be integrated with various platforms such as web and mobile. Any user can connect his application with this cloud service through the API.
 
 The technology stack I used on this project includes:
   - React.js
@@ -9,12 +9,10 @@ The technology stack I used on this project includes:
   - Webpack
 
 # Getting Started
-> Note: This project is still in progress, therefore all existing components are temporary and may change in the future.
-
 ~~~
-$ git clone https://github.com/febriadj/storage-service.git
+$ git clone https://github.com/febriadj/driveku.git
 
-$ cd storage-service && code .
+$ cd driveku && code .
 ~~~
 ~~~
 $ mv .env.example .env
@@ -47,7 +45,7 @@ If you have any suggestions that would make this even better, please fork this r
 - Submit a pull request
 
 # License 📄
-Distributed under the MIT License. See [LICENSE.txt](https://github.com/febriadj/storage-service/blob/master/LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE.txt](https://github.com/febriadj/driveku/blob/master/LICENSE) for more information.
 
 # Contact
 LinkedIn: [linkedin.com/in/febri-adji](https://linkedin.com/in/febri-adji)
