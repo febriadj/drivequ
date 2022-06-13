@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const authenticate = require('../middleware/internal/auth');
-const upload = require('../middleware/internal/fileUpload');
 
 const user = require('../controllers/internal/user');
 const trash = require('../controllers/internal/trash');
@@ -21,7 +20,7 @@ router.put('/trash/recover', authenticate, trash.recover);
 router.get('/documents', authenticate, document.find);
 router.get('/documents/:id/file/:filename', document.open);
 router.get('/documents/size', authenticate, document.size);
-router.post('/documents', authenticate, upload.array('file'), document.insert);
+router.post('/documents', authenticate, document.insert);
 router.put('/documents/move', authenticate, document.move);
 router.put('/documents/trashing', authenticate, document.trashed);
 
