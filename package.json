@@ -1,7 +1,7 @@
 {
-  "name": "driveku",
+  "name": "drivequ",
   "version": "1.0.0",
-  "description": "driveku is a storage manager that can be integrated with various platforms such as web and mobile",
+  "description": "DriveQu is a storage manager that can be integrated with various platforms such as web and mobile",
   "main": "server/index.js",
   "engines": {
     "npm": ">=8.11.0",
@@ -17,11 +17,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/febriadj/driveku.git"
+    "url": "git+https://github.com/febriadj/drivequ.git"
   },
   "keywords": [
-    "driveku-app",
-    "driveku",
+    "drivequ-app",
+    "drivequ",
     "cloud-storage",
     "storage-manager",
     "file-manager"
@@ -29,9 +29,9 @@
   "author": "Febriadji <iamfebriadji@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/febriadj/driveku/issues"
+    "url": "https://github.com/febriadj/drivequ/issues"
   },
-  "homepage": "https://github.com/febriadj/driveku#readme",
+  "homepage": "https://github.com/febriadj/drivequ#readme",
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@babel/plugin-transform-runtime": "^7.17.0",
