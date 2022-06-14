@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+const { connect } = require('mongoose');
 const config = require('../config');
 
 module.exports = async () => {
   try {
-    const { uri } = config.database;
-    await mongoose.connect(uri);
+    const { isDev, database: { uri: { prod, dev } } } = config;
+    await connect(isDev ? dev : prod);
 
     console.log('database connected');
   }
