@@ -1,73 +1,56 @@
 const nodePath = require('path');
-const mv = require('mv');
 const DocModel = require('../../database/models/document');
 const FolderModel = require('../../database/models/folder');
 
 const response = require('../../helpers/response');
+const fileUpload = require('../../middleware/internal/fileUpload');
 
 exports.insert = async (req, res) => {
-  const { location = '/' } = req.body;
+  fileUpload.array('file')(req, res, async (error1) => {
+    try {
+      if (error1) throw error1;
 
-  let currFolder;
-  if (location !== '/') {
-    currFolder = await FolderModel.findOne({
-      $and: [
-        { userId: req.user.id },
-        { url: location },
-      ],
-    });
-  }
+      const { location = '/' } = req.body;
+      let currFolder;
 
-  for (let i = 0; i < req.files.length; i += 1) {
-    const {
-      originalname,
-      filename,
-      size,
-      destination,
-      path: filepath,
-      mimetype,
-    } = req.files[i];
-
-    const splitName = originalname.split('.');
-    const format = splitName.length > 1 ? splitName.reverse()[0] : 'txt';
-
-    mv(filepath, `${destination}/${req.user.id}/${filename}.${format}`, { mkdirp: true }, async (error2) => {
-      try {
-        if (error2) throw error2;
-
-        await new DocModel({
-          userId: req.user.id,
-          filename,
-          originalname,
-          format,
-          location,
-          url: `/api/documents/${req.user.id}/file/${filename}.${format}`,
-          mimetype,
-          size,
-          path: location === '/' ? ['/'] : currFolder.path,
-          parents: location === '/' ? [] : [...currFolder.parents, currFolder._id.toString()],
-        }).save();
-
-        if (i >= req.files.length - 1) {
-          response({
-            res,
-            message: 'Document added successfully',
-            payload: {
-              files: req.files.length,
-            },
-          });
-        }
-      }
-      catch (error0) {
-        response({
-          res,
-          httpStatusCode: error0.statusCode || 400,
-          success: false,
-          message: error0.message,
+      if (location !== '/') {
+        currFolder = await FolderModel.findOne({
+          $and: [
+            { userId: req.user.id },
+            { url: location },
+          ],
         });
       }
-    });
-  }
+
+      for (let i = 0; i < req.files.length; i += 1) {
+        req.files[i] = {
+          ...req.files[i],
+          userId: req.user.id,
+          filename: req.files[i].newFilename,
+          parents: location === '/' ? [] : [...currFolder.parents, currFolder._id.toString()],
+          path: location === '/' ? ['/'] : currFolder.path,
+        };
+      }
+
+      await DocModel.insertMany(req.files);
+
+      response({
+        res,
+        message: 'Document added successfully',
+        payload: {
+          files: req.files.length,
+        },
+      });
+    }
+    catch (error0) {
+      response({
+        res,
+        httpStatusCode: error0.statusCode || 400,
+        success: false,
+        message: error0.message,
+      });
+    }
+  });
 };
 
 exports.find = async (req, res) => {
