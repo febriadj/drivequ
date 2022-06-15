@@ -3,10 +3,8 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import * as icon from 'react-icons/bi';
 import { login } from '../../redux/features/auth';
-import baseConfig from '../../config';
 
 function Login({ setLoginFormIsOpen }) {
-  const configs = localStorage.getItem('configs');
   const dispatch = useDispatch();
 
   const [response, setResponse] = useState({
@@ -41,7 +39,7 @@ function Login({ setLoginFormIsOpen }) {
       }));
 
       const obj = JSON.stringify({ remember: remember ? form.email : '' });
-      localStorage.setItem('configs', obj);
+      localStorage.setItem('app', obj);
       localStorage.setItem('token', data.payload);
 
       setTimeout(() => {
@@ -57,91 +55,106 @@ function Login({ setLoginFormIsOpen }) {
     }
   };
 
-  const fieldStyle = 'py-2.5 px-3.5 border border-solid border-gray-300 rounded-lg grid grid-cols-2/auto-1fr items-center gap-3.5 hover:border-black';
-
   useEffect(() => {
-    if (configs) {
+    const app = localStorage.getItem('app');
+
+    if (app) {
       setForm((prev) => ({
         ...prev,
-        email: JSON.parse(configs).remember,
+        email: JSON.parse(app).remember,
       }));
     }
   }, []);
 
   return (
-    <div className="absolute w-full h-full overflow-y-scroll p-5">
+    <div className="absolute w-full h-full overflow-y-scroll py-10 px-5 md:p-10">
       <div>
-        <span className="flex items-center gap-2.5 mb-2.5">
-          <h1 className="text-3xl font-semibold">Sign In</h1>
-          <span className="block w-1 h-1 bg-black rounded-[50%]"></span>
-          <h1 className="text-base opacity-50">Sign Up</h1>
-        </span>
-        <p>{`${configs && JSON.parse(configs).remember ? 'Welcome back' : `Welcome to ${baseConfig.appName}`}, please login to your account and enjoy our service`}</p>
+        <h1 className="text-2xl font-bold mb-2">Sign In</h1>
+        <p>Complete all forms to enter your storage dashboard.</p>
       </div>
-      <form method="post" className="w-full grid gap-2.5 my-10" onSubmit={handleSubmit}>
-        <label htmlFor="email" className={fieldStyle}>
-          <icon.BiEnvelope className="text-xl" />
+      <form method="post" className="w-full grid gap-2 my-10" onSubmit={handleSubmit}>
+        <label htmlFor="email" className="relative flex items-center">
+          <icon.BiEnvelope className="text-xl absolute left-0 translate-x-3" />
           <input
             type="email"
             name="email"
             id="email"
-            className="bg-transparent w-full"
-            placeholder="Email"
+            className="peer bg-transparent w-full py-3 px-11 rounded-md border border-solid border-gray-300 focus:border-black valid:bg-gray-50"
+            placeholder="Email address"
             value={form.email}
             onChange={handleChange}
             required
           />
+          {
+            form.email.length > 0 && (
+              <>
+                <icon.BiError className="text-xl absolute right-0 -translate-x-3 hidden text-red-600 peer-invalid:block" />
+                <icon.BiCheckCircle className="text-xl absolute right-0 -translate-x-3 hidden text-emerald-600 peer-valid:block" />
+              </>
+            )
+          }
         </label>
-        <label htmlFor="password" className={fieldStyle}>
-          <icon.BiLockAlt className="text-xl" />
+        <label htmlFor="password" className="relative flex items-center">
+          <icon.BiLockOpenAlt className="text-xl absolute left-0 translate-x-3" />
           <input
             type="password"
             name="password"
             id="password"
-            className="bg-transparent w-full"
+            className="peer bg-transparent w-full py-3 px-11 rounded-md border border-solid border-gray-300 focus:border-black valid:bg-gray-50"
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
             required
           />
+          {
+            form.password.length > 0 && (
+              <>
+                <icon.BiError className="text-xl absolute right-0 -translate-x-3 hidden text-red-600 peer-invalid:block" />
+                <icon.BiCheckCircle className="text-xl absolute right-0 -translate-x-3 hidden text-emerald-600 peer-valid:block" />
+              </>
+            )
+          }
         </label>
         <div className="flex items-center">
           <button
             type="button"
-            className="bg-gray-100 rounded-lg py-1 pl-1.5 pr-2.5 flex items-center gap-1.5 hover:bg-gray-200"
+            className="bg-gray-100 rounded-md py-1 pl-1 pr-2 flex items-center gap-1 hover:bg-gray-200"
             onClick={() => {
               setRemember((prev) => !prev);
             }}
           >
             { remember ? <icon.BiRadioCircleMarked className="text-xl" /> : <icon.BiRadioCircle className="text-xl" /> }
-            <p>Remember Me</p>
+            <p>Remember me</p>
           </button>
         </div>
         <div className="grid mt-5">
-          <p className={`text-base ${response.success ? 'text-black' : 'text-red-900'} first-letter:uppercase`}>{response.message}</p>
-          <div className="grid grid-cols-2/1fr-auto gap-2.5 mt-3.5">
-            <button
-              type="submit"
-              className="p-3.5 bg-blue-500 rounded-lg text-white hover:bg-blue-600"
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              className="p-3.5 bg-gray-100 rounded-lg w-24 hover:bg-gray-200"
-              onClick={() => {
-                setLoginFormIsOpen(false);
-              }}
-            >
-              Sign Up
-            </button>
-          </div>
+          {
+            response.message && (
+              <p className={`${response.success ? 'text-black' : 'text-red-900'} mb-2 underline decoration-1 decoration-red-900 first-letter:uppercase`}>
+                {response.message}
+              </p>
+            )
+          }
+          <button
+            type="submit"
+            className="p-3 bg-blue-500 rounded-md text-white hover:bg-blue-600 font-bold border border-solid border-blue-800"
+          >
+            Sign In
+          </button>
         </div>
       </form>
-      <div className="flex items-center gap-1">
-        <icon.BiCopyright className="text-base" />
-        <p>{`${new Date().getFullYear()} ${baseConfig.appName}`}</p>
-      </div>
+      <p>
+        <span className="mr-2">Don&#39;t have an account?</span>
+        <span
+          aria-hidden
+          className="cursor-pointer hover:underline decoration-1"
+          onClick={() => {
+            setLoginFormIsOpen(false);
+          }}
+        >
+          Sign Up
+        </span>
+      </p>
     </div>
   );
 }
