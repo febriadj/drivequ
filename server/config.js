@@ -10,7 +10,7 @@ module.exports = {
     },
   },
   fileUpload: {
-    max: 2 * 1000 * 1000, // 2 mb
+    max: 5 * 1024 * 1024, // 5 mb
     types: [
       'application',
       'text',
