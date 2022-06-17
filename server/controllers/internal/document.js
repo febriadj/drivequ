@@ -29,6 +29,7 @@ exports.insert = async (req, res) => {
           filename: req.files[i].newFilename,
           parents: location === '/' ? [] : [...currFolder.parents, currFolder._id.toString()],
           path: location === '/' ? ['/'] : currFolder.path,
+          location,
         };
       }
 
