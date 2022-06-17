@@ -6,6 +6,12 @@ const modalSlice = createSlice({
     logoutIsOpen: false,
     zipDownloadIsOpen: false,
     exportIsOpen: false,
+    loadUpload: {
+      end: false,
+      success: true,
+      message: '',
+      data: null,
+    },
   },
   reducers: {
     logoutModal(state) {
@@ -16,9 +22,15 @@ const modalSlice = createSlice({
     },
     exportModal(state) {
       state.exportIsOpen = !state.exportIsOpen;
-    }
+    },
+    setLoadUpload(state, { payload }) {
+      state.loadUpload = {
+        ...state.loadUpload,
+        ...payload,
+      };
+    },
   },
 });
 
-export const { logoutModal, zipDownloadModal, exportModal } = modalSlice.actions;
+export const { logoutModal, zipDownloadModal, exportModal, setLoadUpload } = modalSlice.actions;
 export default modalSlice.reducer;
