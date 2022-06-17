@@ -8,11 +8,12 @@ import * as helper from './helpers';
 import * as page from './pages';
 import { login, logout } from './redux/features/auth';
 import { totalSize } from './redux/features/document';
+import LoadUpload from './components/loadUpload';
 
 function App() {
   const token = localStorage.getItem('token');
   const dispatch = useDispatch();
-  const { user, isLoggedIn } = useSelector((state) => state.auth);
+  const { modal, auth: { user, isLoggedIn } } = useSelector((state) => state);
 
   const handleLogin = async () => {
     try {
@@ -40,6 +41,9 @@ function App() {
 
   return (
     <BrowserRouter>
+      {
+        modal.loadUpload.data && <LoadUpload />
+      }
       <Routes>
         {
           !isLoggedIn && !user
