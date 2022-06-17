@@ -1,3 +1,4 @@
 export default {
-  appName: 'DriveKu',
+  appName: 'DriveQu',
+  maxStorage: 15 * 1024 * 1024,
 };
