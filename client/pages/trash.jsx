@@ -187,7 +187,7 @@ function Trash() {
           </div>
         </div>
         <div className="w-full grid grid-cols-2/1fr-auto">
-          <div className="relative overflow-y-scroll">
+          <div className="relative overflow-y-scroll z-10">
             <div className="absolute w-full flex items-center h-14">
               <span className="w-full h-full overflow-x-hidden flex justify-between items-center gap-3.5 bg-gray-100 mt-5 mx-3.5 sm:ml-0 md:mr-5 px-5 rounded-lg">
                 <p className="truncate">Items in trash will be deleted forever after 7 days</p>
