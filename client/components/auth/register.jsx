@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
+import config from '../../config';
 
 function Register({ setLoginFormIsOpen }) {
   const [form, setForm] = useState({
@@ -74,7 +75,7 @@ function Register({ setLoginFormIsOpen }) {
     <div className="absolute w-full h-full overflow-y-scroll py-10 px-5 md:p-10">
       <div>
         <h1 className="text-2xl font-bold mb-2">Sign Up</h1>
-        <p>Complete all forms to register your account on the DriveQu service.</p>
+        <p>{`Complete all forms to register your account on the ${config.appName} service.`}</p>
       </div>
       <form method="post" className="w-full grid gap-10 my-10" onSubmit={handleSubmit}>
         <span className="grid grid-cols-2/1fr-auto gap-2">
@@ -174,7 +175,7 @@ function Register({ setLoginFormIsOpen }) {
                     name="lastname"
                     id="lastname"
                     className="peer bg-transparent w-full py-3 px-11 rounded-md border border-solid border-gray-300 focus:border-black valid:bg-gray-50"
-                    placeholder="First name"
+                    placeholder="Last name"
                     value={form.lastname}
                     onChange={handleChange}
                     required
