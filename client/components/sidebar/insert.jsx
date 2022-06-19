@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 import { totalSize } from '../../redux/features/document';
+import { setLoadUpload } from '../../redux/features/modal';
 import * as helper from '../../helpers';
 
 function Insert({
@@ -21,31 +22,44 @@ function Insert({
   const handleUploadFile = async (event) => {
     try {
       const fd = new FormData();
+      const fileDataOnLoad = [];
+      const { files } = event.target;
 
-      for (let i = 0; i < event.target.files.length; i += 1) {
-        fd.append('file', event.target.files[i]);
+      for (let i = 0; i < files.length; i += 1) {
+        fd.append('file', files[i]);
+
+        const { name, type, size } = files[i];
+        fileDataOnLoad.push({ name, type, size });
       }
+
       fd.append('location', location);
       fd.append('parents', currentFolder ? [...currentFolder.parents, currentFolder._id] : []);
       fd.append('path', currentFolder ? [...currentFolder.path] : ['/']);
 
+      dispatch(setLoadUpload({
+        end: false,
+        success: true,
+        message: `${fileDataOnLoad.length} files being uploaded`,
+        data: fileDataOnLoad,
+      }));
+
+      setTimeout(() => {
+        setModal((prev) => ({
+          ...prev, insert: false, sidebarInsert: false,
+        }));
+      }, 500);
+
       await axios({
-        method: 'post',
-        url: 'http://localhost:5050/api/in/documents',
-        data: fd,
+        method: 'POST',
+        url: '/api/in/documents',
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
+        data: fd,
       });
 
       if (page === '/trash') {
-        setTimeout(() => {
-          setModal((prev) => ({
-            ...prev, insert: false, sidebarInsert: false,
-          }));
-        }, 200);
-
         setTimeout(async () => {
           dispatch(totalSize(await helper.totalSize({ trashed: false })));
           navigate('/');
@@ -53,16 +67,21 @@ function Insert({
       } else {
         handleGetDocs();
         dispatch(totalSize(await helper.totalSize({ trashed: false })));
-
-        setTimeout(() => {
-          setModal((prev) => ({
-            ...prev, insert: false, sidebarInsert: false,
-          }));
-        }, 500);
       }
+
+      dispatch(setLoadUpload({
+        end: true,
+        success: true,
+        message: `${fileDataOnLoad.length} files uploaded`,
+        data: fileDataOnLoad,
+      }));
     }
     catch (error0) {
-      console.error(error0.response.data.message);
+      dispatch(setLoadUpload({
+        end: true,
+        success: false,
+        message: error0.response.data.message,
+      }));
     }
   };
 
