@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import * as icon from 'react-icons/bi';
 import { totalSize } from '../../redux/features/document';
+import { setLoadUpload } from '../../redux/features/modal';
 import * as helper from '../../helpers';
 
 function Insert({
@@ -17,11 +18,29 @@ function Insert({
   const handleUploadFile = async (event) => {
     try {
       const fd = new FormData();
+      const fileDataOnLoad = [];
 
       fd.append('location', location);
       for (let i = 0; i < event.target.files.length; i += 1) {
         fd.append('file', event.target.files[i]);
+
+        const { name, type, size } = event.target.files[i];
+        fileDataOnLoad.push({ name, type, size });
       }
+
+      dispatch(setLoadUpload({
+        end: false,
+        success: true,
+        message: `${fileDataOnLoad.length} files being uploaded`,
+        data: fileDataOnLoad,
+      }));
+
+      setTimeout(() => {
+        setModal((prev) => ({
+          ...prev,
+          insert: false,
+        }));
+      }, 500);
 
       await axios({
         method: 'POST',
@@ -36,21 +55,25 @@ function Insert({
       handleGetDocs();
       dispatch(totalSize(await helper.totalSize({ trashed: false })));
 
-      setTimeout(() => {
-        setModal((prev) => ({
-          ...prev,
-          insert: false,
-        }));
-      }, 500);
+      dispatch(setLoadUpload({
+        end: true,
+        success: true,
+        message: `${fileDataOnLoad.length} files uploaded`,
+        data: fileDataOnLoad,
+      }));
     }
     catch (error0) {
-      console.error(error0.response.data.message);
+      dispatch(setLoadUpload({
+        end: true,
+        success: false,
+        message: error0.response.data.message,
+      }));
     }
   };
 
   return (
     <div
-      className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 z-10 translate-y-12"
+      className="absolute top-0 w-60 left-0 bg-white shadow-lg shadow-gray-300 z-20 translate-y-12"
       style={{
         transform: `translate(${position}px, 54px)`,
       }}
