@@ -23,7 +23,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the
-[DriveQu Code of Conduct](https://github.com/febriadj/drivequblob/master/CODE_OF_CONDUCT.md).
+[DriveQu Code of Conduct](https://github.com/febriadj/drivequ/blob/master/CODE_OF_CONDUCT.md).
 By participating, you are expected to uphold this code. Please report unacceptable behavior
 to <iamfebriadji@gmail.com>.
 
