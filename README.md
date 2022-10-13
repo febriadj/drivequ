@@ -34,7 +34,7 @@
     ~~~
 
 # Screenshots 📸
-![img](./documents/images/app.png)
+![img](./docs/images/app.png)
 
 # Contributing
 See [CONTRIBUTING.md](https://github.com/febriadj/drivequ/blob/master/CONTRIBUTING.md) for contributing guidelines
