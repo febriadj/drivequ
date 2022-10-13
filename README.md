@@ -46,8 +46,8 @@ Distributed under the **GPL 3.0 License**. See [LICENSE.txt](https://github.com/
 Email: <iamfebriadji@gmail.com>
 
 # Contributors
-<a href="https://github.com/nodejs/node/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=febriadj/drivequ&max=16&columns=8" />
+<a href="https://github.com/febriadj/drivequ/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=febriadj/drivequ&max=16&columns=8&anon" />
 </a>
 
 # Support us 🤝
