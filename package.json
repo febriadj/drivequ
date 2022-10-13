@@ -20,14 +20,13 @@
     "url": "git+https://github.com/febriadj/drivequ.git"
   },
   "keywords": [
-    "drivequ-app",
     "drivequ",
-    "cloud-storage",
     "storage-manager",
-    "file-manager"
+    "file-manager",
+    "cloud-storage"
   ],
   "author": "Febriadji <iamfebriadji@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/febriadj/drivequ/issues"
   },
